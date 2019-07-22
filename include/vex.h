@@ -29,6 +29,7 @@ vex::motor             RgtRoller(vex::PORT20, vex::gearSetting::ratio18_1, true)
 vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio18_1, false);
 
 vex::pot               arm_pot(Brain.ThreeWirePort.A);
+vex::gyro              Rgyro(Brain.ThreeWirePort.B);
 vex::encoder           rgtEnc(Brain.ThreeWirePort.C);
 vex::encoder           lftEnc(Brain.ThreeWirePort.E);
 vex::encoder           bckEnc(Brain.ThreeWirePort.G);
@@ -56,7 +57,7 @@ void trackPos(){
 
   while(1){
     //track pos of robot
-    Drive.trackAngle();
+    Drive.trackPos();
     Brain.Screen.printAt(100,100,"%f",Drive.sPos.Ang);
     wait(10);
   }
@@ -80,7 +81,7 @@ void driveControl(){
     //if planning to turn robot
     if((Drive.desiredAng != 0 || Drive.desiredPos == 0)){
       //PID to turn robot to correct angle
-      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), Drive.desiredAng));
+      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.sPos.Ang, Drive.desiredAng));
       //turn = PIDCalculator(Drive.DesPower, radToDeg(Drive.sPos.Ang), radToDeg(Drive.sPos.Ang), Drive.desiredAng, 1.3, 0.08125, 0.325);
     }
     else {turn=0; turn1 = 0;} //dont turn robot 

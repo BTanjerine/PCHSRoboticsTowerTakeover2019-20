@@ -816,7 +816,6 @@ void usercontrol( void ) {
   SwivelControl.interrupt();
 
   while (1){
-    Drive.trackAngle();
     //pair joystiick values to drive motors
     if(Joystick.ButtonDown.pressing()){
       rgt = -20; 
@@ -828,9 +827,7 @@ void usercontrol( void ) {
     }
 
     Drive.move_drive(lft, rgt);
-
-    Brain.Screen.printAt(100, 100, "%f", radToDeg(Drive.sPos.Ang));
-
+    
     Brain.Screen.printAt(20, 20, "%f", Drive.getRightPosInches());
     Brain.Screen.printAt(20, 40, "%f", Drive.getLeftPosInches());
 

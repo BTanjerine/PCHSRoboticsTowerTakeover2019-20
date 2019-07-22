@@ -45,20 +45,6 @@ class drive{
   //desired drive power
   int DesPower;
 
-  void trackAngle(){
-    L = getLeftPosInches() - lstLft;  //change in encoder
-    R = getRightPosInches() - lstRgt;
-    B = getBckPosInches() - lstBck;
-
-    lstLft = getLeftPosInches();  //record last pos
-    lstRgt = getRightPosInches();
-    lstBck = getBckPosInches();
-
-    DeltaAngle = (L-R)/15;  //find change in robot angle 
-
-    sPos.Ang += DeltaAngle; //add up change in angle
-  }
-
   void trackPos(){
     L = getLeftPosInches() - lstLft;  //change in encoder
     R = getRightPosInches() - lstRgt;
@@ -70,13 +56,13 @@ class drive{
 
     DeltaAngle = (L-R)/15;  //find change in robot angle 
 
-    sPos.Ang += DeltaAngle; //add up change in angle
+    sPos.Ang = getRobotAngle(); //add up change in angle
 
     if(DeltaAngle){
       float radiusRL = R/DeltaAngle;  //find the radius of the circle the robot travels around using right enc
       float radiusB = B/DeltaAngle;   //same as ^^ except the back tracking enc
 
-      halfAng = DeltaAngle/2.0; //find half the angle traveled
+      halfAng = (DeltaAngle/2.0); //find half the angle traveled
       float sinHA = sin(halfAng); //find the sin of half the angle
 
       hRL = ((radiusRL + sideToMid)*sinHA)*2.0; //find change in Y
@@ -90,7 +76,7 @@ class drive{
 
     if(sPos.Ang > (2*M_PI) || sPos.Ang < -(2*M_PI)){sPos.Ang = 0;}
 
-    float EndAng = halfAng + sPos.Ang;  //find ending angle
+    float EndAng = (halfAng + sPos.Ang);  //find ending angle
 
     float sinEA = sin(EndAng);  //calculate sin cos of ending angle 
     float cosEA = cos(EndAng);
@@ -103,10 +89,20 @@ class drive{
     sPos.x += hB*cosEA;   //cos(x) = cos(-x)
   }
   
+  //find the robot angle using gyro
+  float getRobotAngle(){
+    return Rgyro.value(rotationUnits::deg)/10;
+    }
+  
   //current postion of drive side (left)
   int getLeftPosition(){
     //average of front and back 
     return LftDrive.rotation(rotationUnits::raw);
+  }
+
+  //get current position of mid wheel
+  int getMidPosition(){
+    return MidDrive.rotation(rotationUnits::raw);
   }
   
   //current postion of drive side (right)
@@ -123,11 +119,6 @@ class drive{
   //current psotion of drive side (back) in inches for position tracking
   int getBckPosInches(){
     return bckEnc.rotation(rotationUnits::raw) * QEncToInches;
-  }
-
-  //get current position of mid wheel
-  int getMidPosition(){
-    return MidDrive.rotation(rotationUnits::raw);
   }
 
   //get current position of mid wheel in inches
