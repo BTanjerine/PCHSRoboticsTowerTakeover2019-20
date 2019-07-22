@@ -1,0 +1,86 @@
+/********
+rgt side
+********/
+
+//deploy rollers
+setSwivel(100, 1000);
+wait(500);
+setRoller(100,3000);
+setSwivel(100,-100);
+wait(500);
+
+//move to first cube
+setDrive(100,14,0);
+setRoller(100,18000);
+wait(1000);
+
+pickUp(3);  //stop and go forward multiple times to pick up cubes
+wait(500);
+
+setDrive(80,12,35);
+wait(1300);
+
+setDrive(70,0,220);
+wait(1800);
+
+setRoller(-70,800);
+setDrive(80,35.5,0);  //move to zone
+wait(500);
+setRoller(70,1000);
+wait(1000);
+
+//setRoller(-25,3000);   //outtake a little
+setSwivel(100, 2000);  //raise tower
+wait(1100);
+setSwivel(30, 2800);
+wait(1200);
+
+setDrive(60,-10,0);   //back up away from tower
+//setRoller(-3,500);
+wait(1900);
+
+/********
+Lft side
+********/
+setSwivel(100, 1000);
+wait(500);
+setRoller(100,3000);
+setSwivel(100,-100);
+wait(500);
+
+//move to first cube
+setDrive(100,12,0);
+setRoller(100,18000);
+wait(1000);
+
+pickUp(3);  //stop and go forward multiple times to pick up cubes
+wait(500);
+setRoller(0,0);
+
+setDrive(80,12.5,-35);
+wait(50);
+setRoller(100,5000);
+wait(1300);
+
+setDrive(80,-3,0);
+wait(700);
+setRoller(0,0);
+
+setDrive(70,0,166);
+wait(1800);
+
+setRoller(-70,800);
+setDrive(80,35.5,0);  //move to zone
+wait(500);
+setRoller(70,1000);
+wait(1000);
+
+//setRoller(-25,3000);   //outtake a little
+setSwivel(100, 2000);  //raise tower
+wait(1100);
+setSwivel(30, 2800);
+wait(1200);
+
+setDrive(60,-10,0);   //back up away from tower
+//setRoller(-3,500);
+wait(1900);
