@@ -53,15 +53,12 @@ intake Intake;
 
 
 void trackPos(){
-
   while(1){
     //track pos of robot
     Drive.trackPos();
     Brain.Screen.printAt(100,100,"%f",Drive.sPos.Ang);
     wait(10);
   }
-
-
 }
 
 void driveControl(){
