@@ -24,7 +24,7 @@ void pre_auton( void ){
     Drive.reset();
     Arm.reset();
     Intake.reset();
-    autoOptions = 0;
+    autoOptions = 1;
   }
 
   while(Competition.isEnabled() != true){
@@ -827,7 +827,7 @@ void usercontrol( void ) {
     }
 
     Drive.move_drive(lft, rgt);
-    
+
     Brain.Screen.printAt(20, 20, "%f", Drive.getRightPosInches());
     Brain.Screen.printAt(20, 40, "%f", Drive.getLeftPosInches());
 
