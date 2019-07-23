@@ -56,7 +56,7 @@ class drive{
 
     DeltaAngle = (L-R)/15;  //find change in robot angle 
 
-    sPos.Ang = getRobotAngle(); //add up change in angle
+    sPos.Ang += DeltaAngle; //add up change in angle
 
     if(DeltaAngle){
       float radiusRL = R/DeltaAngle;  //find the radius of the circle the robot travels around using right enc
@@ -88,11 +88,6 @@ class drive{
     sPos.y += hB*-sinEA;  //-sin(x) = sin(-x)
     sPos.x += hB*cosEA;   //cos(x) = cos(-x)
   }
-  
-  //find the robot angle using gyro
-  float getRobotAngle(){
-    return Rgyro.value(rotationUnits::deg)/10;
-    }
   
   //current postion of drive side (left)
   int getLeftPosition(){
