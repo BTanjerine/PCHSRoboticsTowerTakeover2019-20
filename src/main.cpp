@@ -24,7 +24,7 @@ void pre_auton( void ){
     Drive.reset();
     Arm.reset();
     Intake.reset();
-    autoOptions = 0;
+    autoOptions = 1;
   }
 
   while(Competition.isEnabled() != true){
