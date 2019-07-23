@@ -17,7 +17,7 @@ class arm{
   //clear arm values
   void reset(){
     //reset desired positions
-    desiredPos = 0;     
+    desiredPos = 260;     
     DesPower = 0;
   }    
   
