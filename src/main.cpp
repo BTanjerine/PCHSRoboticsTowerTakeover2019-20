@@ -827,7 +827,7 @@ void usercontrol( void ) {
     }
 
     Drive.move_drive(lft, rgt);
-    
+
     Brain.Screen.printAt(20, 20, "%f", Drive.getRightPosInches());
     Brain.Screen.printAt(20, 40, "%f", Drive.getLeftPosInches());
 
