@@ -62,7 +62,8 @@ void trackPos(){
 }
 
 void driveControl(){
-  int turn, turn1 = 0;
+  int turn;
+  int correction;
   int driveLft = 0;
   int driveRgt = 0;
   int rgt, lft;
@@ -72,36 +73,42 @@ void driveControl(){
   int correction;
   
   while(1){
-    //track robots position
-
-    Drive.currentPosVec.x = x - Drive.sPos.x;
-    Drive.currentPosVec.y = y - Drive.sPos.y;
-    vectorTopolar(Drive.currentPosVec, Drive.currentPosPol);
-    Drive.currentPosPol.Ang += Drive.followAng;
-    polarTovectors(Drive.currentPosPol, Drive.currentPosVec);
-
-    float aErr = Drive.followAng - Drive.sPos.Ang;
-    float xErr = Drive.currentPosVec.x + Drive.currentPosVec.y * sin(aErr) / cos(aErr);
-
     //if planning to turn robot
-    if((Drive.desiredAng != 0 || Drive.desiredPos == 0)){
+    if((Drive.desiredAng != radToDeg(Drive.sPos.Ang))){
       //PID to turn robot to correct angle
       turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), Drive.desiredAng));
       //turn = PIDCalculator(Drive.DesPower, radToDeg(Drive.sPos.Ang), radToDeg(Drive.sPos.Ang), Drive.desiredAng, 1.3, 0.08125, 0.325);
     }
-    else {turn=0; turn1 = 0;} //dont turn robot 
+    else {turn=0;} //dont turn robot 
 
     //if planning to move robot 
     if(Drive.desiredPos != 0){
       //PID to move robot to position
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+
+      if(turn == 0){
+        _line followLine;
+
+        //set points for the line the robot has to follow
+        followLine.p1.x = Drive.sPos.x; //start
+        followLine.p1.y = Drive.sPos.y;
+
+        followLine.p2.x = Drive.desiredPos * cos(Drive.desiredAng);  //end
+        followLine.p2.y = Drive.desiredPos * sin(Drive.desiredAng);
+
+        //find angle of line
+        Drive.followAng = lineAngle(followLine);
+
+        correction = Drive.correctionPID.getOutputPower(Drive.DesPower, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), Drive.followAng));
+      }
+      else{correction = 0;}
     }
-    else{driveLft = 0; driveRgt = 0;} //dont move robot
+    else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
     //set drive power
-    lft = driveLft+turn;  
-    rgt = driveRgt-turn;
+    lft = (driveLft+correction) + turn;  
+    rgt = (driveRgt-correction) - turn;
 
     Drive.move_drive(lft, rgt);
 

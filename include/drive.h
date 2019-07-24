@@ -50,6 +50,8 @@ class drive{
 
   _vector desPos;
 
+  bool turning;
+
   //desired drive power
   int DesPower;
 

@@ -44,6 +44,28 @@ void pickUp(int times, int frequency = 800, float dist = 8.5){
   }
 }
 
+
+void setDriveNew(int power, float drivePos, float turnAngle = radToDeg(Drive.sPos.Ang), float rate = 1, bool slowdown = false){
+  //- left + right
+
+  //reset enc
+  MidDrive.resetRotation();
+  //reset PID values
+  Drive.drivePID.changePID(8, 0.5, 2);
+
+  if(rate != 1){
+    Drive.drivePID.changePID(8/rate, 0.5/rate, 2/rate);
+  }
+
+  if(slowdown){
+    Drive.drivePID.changePID(5/rate, 0.3125/rate, 1.25/rate);
+  }
+
+  Drive.DesPower = power;             //set power
+  Drive.desiredAng = turnAngle;  //convert encoder to angle *1.1 *8.44
+  Drive.desiredPos = drivePos;        //set drive pos
+}
+
 void moveTo(float x, float y, int power, bool slowdown = false){
   _line followLine;
   
