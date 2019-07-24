@@ -66,24 +66,6 @@ void setDriveNew(int power, float drivePos, float turnAngle = radToDeg(Drive.sPo
   Drive.desiredPos = drivePos;        //set drive pos
 }
 
-void moveTo(float x, float y, int power, bool slowdown = false){
-  _line followLine;
-  
-  //set points for the line the robot has to follow
-  followLine.p1.x = Drive.sPos.x; //start
-  followLine.p1.y = Drive.sPos.y;
-
-  followLine.p2.x = x;  //end
-  followLine.p2.y = y;
-
-  //set desired pos
-  Drive.desPos.x = x;
-  Drive.desPos.y = y;
-
-  //find distance and lenght of line
-  Drive.followDist = lineLength(followLine);
-  Drive.followAng = lineAngle(followLine);
-}
 
 
 

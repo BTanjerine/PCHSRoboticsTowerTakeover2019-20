@@ -88,14 +88,15 @@ void driveControl(){
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
 
       if(turn == 0){
+        //make following line 
         _line followLine;
 
         //set points for the line the robot has to follow
         followLine.p1.x = Drive.sPos.x; //start
         followLine.p1.y = Drive.sPos.y;
 
-        followLine.p2.x = Drive.desiredPos * cos(Drive.desiredAng);  //end
-        followLine.p2.y = Drive.desiredPos * sin(Drive.desiredAng);
+        followLine.p2.x = Drive.desiredPos * cosf(Drive.desiredAng);  //end
+        followLine.p2.y = Drive.desiredPos * sinf(Drive.desiredAng);
 
         //find angle of line
         Drive.followAng = lineAngle(followLine);

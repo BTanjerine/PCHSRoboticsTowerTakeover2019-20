@@ -169,6 +169,14 @@ void autonomous( void ) {
   }
   
   if(autoOptions == 1){
+    setDriveNew(100,12);
+    wait(1000);
+
+    setDriveNew(100,0,90);
+    wait(1000);
+
+    setDriveNew(100,10,180);
+    wait(100000);
     
     //stop subsystem threads
     DriveControl.interrupt();
