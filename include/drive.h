@@ -42,6 +42,14 @@ class drive{
   float desiredPos; 
   float desiredAng;
 
+  float followDist;
+  float followAng;
+
+  _vector currentPosVec;
+  _polar currentPosPol;
+
+  _vector desPos;
+
   //desired drive power
   int DesPower;
 

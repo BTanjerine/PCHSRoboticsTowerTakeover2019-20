@@ -74,6 +74,15 @@ void driveControl(){
   while(1){
     //track robots position
 
+    Drive.currentPosVec.x = x - Drive.sPos.x;
+    Drive.currentPosVec.y = y - Drive.sPos.y;
+    vectorTopolar(Drive.currentPosVec, Drive.currentPosPol);
+    Drive.currentPosPol.Ang += Drive.followAng;
+    polarTovectors(Drive.currentPosPol, Drive.currentPosVec);
+
+    float aErr = Drive.followAng - Drive.sPos.Ang;
+    float xErr = Drive.currentPosVec.x + Drive.currentPosVec.y * sin(aErr) / cos(aErr);
+
     //if planning to turn robot
     if((Drive.desiredAng != 0 || Drive.desiredPos == 0)){
       //PID to turn robot to correct angle
