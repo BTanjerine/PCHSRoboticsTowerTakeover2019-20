@@ -20,7 +20,7 @@ public:
 
   PID drivePID = PID(8, 0.5, 2);
   PID turnPID = PID(1.8, 0.1125, 0.45);
-  PID correctionPID = PID(0.5, 0.03125, 0.125);
+  PID correctionPID = PID(1.8, 0.1125, 0.45);
 
   float bckToMid = 9.0;
   float sideToMid = 7.5;

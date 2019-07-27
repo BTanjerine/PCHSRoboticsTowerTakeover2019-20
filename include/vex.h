@@ -7,6 +7,7 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 //
+#include <cmath>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -78,7 +79,7 @@ void driveControl(){
     //if planning to turn robot
     if(Drive.desiredAng != 0){
       //PID to turn robot to correct angle
-      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + Drive.desiredAng)));
+      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
     }
     else {turn=0;} //dont turn robot 
 
@@ -93,14 +94,19 @@ void driveControl(){
         followLine.p1.x = Drive.sPos.x; //start
         followLine.p1.y = Drive.sPos.y;
 
-        followLine.p2.x = Drive.desiredPos * cosf(Drive.desiredAng);  //end
-        followLine.p2.y = Drive.desiredPos * sinf(Drive.desiredAng);
+        followLine.p2.x = Drive.desiredPos * sinf(Drive.desiredAng);  //end
+        followLine.p2.y = Drive.desiredPos * cosf(Drive.desiredAng);
 
         //find angle of line
-        Drive.followAng = lineAngle(followLine);       
+        if(abs(Drive.followAng-Drive.sPos.Ang)>M_PI/2 && abs(Drive.followAng-Drive.sPos.Ang)<(3*M_PI)/2 && Drive.followAng != 0){
+          Drive.followAng = fmod((Drive.followAng+180), 360.0);
+        }
+        else{
+          Drive.followAng = lineAngle(followLine); 
+        }      
 
         //calculate the correcting power
-        correction = Drive.correctionPID.getOutputPower(5, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.followAng)));
+        correction = Drive.correctionPID.getOutputPower(30, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.followAng)));
       }
       else{correction = 0;}
     }

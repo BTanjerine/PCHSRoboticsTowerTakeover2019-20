@@ -165,8 +165,15 @@ void autonomous( void ) {
   }
   
   if(autoOptions == 1){
-    setDrive(90, 20, 0);
-    wait(10000);
+    //deploy rollers
+    setSwivel(100, 1000);
+    wait(500);
+    setRoller(100,3000);
+    setSwivel(100,-100);
+    wait(500);
+
+    setDriveNew(90, 50);
+    wait(1000000);
 
     //stop subsystem threads
     DriveControl.interrupt();
