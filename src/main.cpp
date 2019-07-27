@@ -101,12 +101,8 @@ void autonomous( void ) {
   ArmControl = thread(ArmPosControl);
   SwivelControl= thread(swivelControl);
   IntakeControl = thread(intakeControl);
-  PosTracker = thread(trackPos);
 
   Brain.Screen.clearScreen();
-
-  //autoOptions = 3;
-
 
   Drive.reset();
   Arm.reset();
@@ -169,15 +165,9 @@ void autonomous( void ) {
   }
   
   if(autoOptions == 1){
-    setDriveNew(100,12);
-    wait(1000);
+    setDrive(90, 20, 0);
+    wait(10000);
 
-    setDriveNew(100,0,90);
-    wait(1000);
-
-    setDriveNew(100,10,180);
-    wait(100000);
-    
     //stop subsystem threads
     DriveControl.interrupt();
     ArmControl.interrupt();
@@ -371,6 +361,10 @@ void autonomous( void ) {
   }
 
   if(autoOptions == 5){
+
+    setDrive(100, 20.0, 0);
+    wait(10000);
+
     
     //stop subsystem threads
     DriveControl.interrupt();
@@ -823,21 +817,18 @@ void usercontrol( void ) {
   IntakeControl.interrupt();
   SwivelControl.interrupt();
 
+  Drive.reset();
+
   while (1){
-    //pair joystiick values to drive motors
-    if(Joystick.ButtonDown.pressing()){
-      rgt = -20; 
-      lft = -20;
-    }
-    else{
-      rgt = Joystick.Axis2.value()*0.95; 
-      lft = Joystick.Axis3.value()*0.95;
-    }
+    rgt = Joystick.Axis2.value()*0.95; 
+    lft = Joystick.Axis3.value()*0.95;
 
     Drive.move_drive(lft, rgt);
 
-    Brain.Screen.printAt(20, 20, "%f", Drive.getRightPosInches());
-    Brain.Screen.printAt(20, 40, "%f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(20, 20, "x: %f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(200, 100, "p1y: %f", Drive.getRightPosInches());
+    /*Brain.Screen.printAt(200, 140, "p2x: %f", followLine.p2.x);
+    Brain.Screen.printAt(200, 160, "p2y: %f", followLine.p2.y);*/
 
     //move arm up/ down when buttons is pressed
     if(Joystick.ButtonL1.pressing()){
@@ -849,12 +840,7 @@ void usercontrol( void ) {
       pastPos = Arm.getArmPos();
     }
     else{
-      //if(Arm.getArmPos() < 250){
-        //Arm.move_arm(Arm.armPID.getP(Arm.armPID.getError(Arm.getArmPos(), 290)));
-      //}
-      //else{
-        Arm.Stop(brakeType::hold);
-      //}
+      Arm.Stop(brakeType::hold);
     }
 
     //intake or spit out cubes when button is pressed
@@ -876,13 +862,16 @@ void usercontrol( void ) {
 
     //move swivel forward/ back when button is pressed
     if(Joystick.ButtonUp.pressing()){
-      Intake.moveSwivel(90);
+      Intake.moveSwivel(95);
     }
     else if(Joystick.ButtonRight.pressing()){
       Intake.moveSwivel(30);
     }
     else if(Joystick.ButtonLeft.pressing()){
       Intake.moveSwivel(-80);
+    }
+    else if(Intake.getSwivelPos() < -10){
+      Intake.stopSwivel(brakeType::hold);
     }
     else{
       Intake.stopSwivel(brakeType::hold);
