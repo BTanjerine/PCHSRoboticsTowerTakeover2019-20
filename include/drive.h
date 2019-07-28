@@ -50,6 +50,7 @@ public:
   // desired drive positions for auto
   float desiredPos;
   float desiredAng;
+  float initAng;
 
   float followDist;
   float followAng;

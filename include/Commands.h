@@ -64,6 +64,7 @@ void setDriveNew(int power, float drivePos, float turnAngle = 0, float rate = 1,
 
   Drive.DesPower = power;             //set power9
   Drive.desiredAng = turnAngle*1.1;  //convert encoder to angle *1.1 *8.44
+  Drive.initAng = Drive.sPos.Ang;
   Drive.desiredPos = drivePos;        //set drive pos
 }
 

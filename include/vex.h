@@ -89,7 +89,7 @@ void driveControl(){
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       
-      if(turn == 0 && (abs(driveLft) > 6 && abs(driveRgt) > 6) && abs(Drive.sPos.x) > 1){
+      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.5){
         //set points for the line the robot has to follow
         followLine.p1.x = Drive.sPos.x; //start
         followLine.p1.y = Drive.sPos.y;
@@ -108,7 +108,9 @@ void driveControl(){
         //calculate the correcting power
         correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.followAng)));
       }
-      else{correction = 0;}
+      else{
+        correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.initAng)));
+      }
     }
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
