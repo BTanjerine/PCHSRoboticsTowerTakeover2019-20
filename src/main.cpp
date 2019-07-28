@@ -172,7 +172,21 @@ void autonomous( void ) {
     setSwivel(100,-100);
     wait(500);
 
-    setDriveNew(90, 50);
+    setDriveNew(90, 17);
+    wait(2000);
+    setDriveNew(90, 0, 90);
+    wait(1500);
+    setDriveNew(90, 17);
+    wait(2000);
+    setDriveNew(90, 0, 90);
+    wait(1500);
+    setDriveNew(90, 17);
+    wait(2000);
+    setDriveNew(90, 0, 90);
+    wait(1500);
+    setDriveNew(90, 17);
+    wait(2000);
+    setDriveNew(90, 0, 90);
     wait(1000000);
 
     //stop subsystem threads
@@ -829,9 +843,13 @@ void usercontrol( void ) {
   while (1){
     rgt = Joystick.Axis2.value()*0.95; 
     lft = Joystick.Axis3.value()*0.95;
-
-    Drive.move_drive(lft, rgt);
-
+    if(Joystick.ButtonDown.pressing()){
+      Drive.move_drive(10, 10);
+    }
+    else{
+      Drive.move_drive(lft, rgt);
+    }
+    
     Brain.Screen.printAt(20, 20, "x: %f", Drive.getLeftPosInches());
     Brain.Screen.printAt(200, 100, "p1y: %f", Drive.getRightPosInches());
     /*Brain.Screen.printAt(200, 140, "p2x: %f", followLine.p2.x);
