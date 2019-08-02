@@ -21,6 +21,7 @@ bool colrSeek;
 
 void pre_auton( void ){
   if(Competition.isEnabled() != true){
+    //reset 
     Drive.reset();
     Arm.reset();
     Intake.reset();
@@ -42,6 +43,7 @@ void pre_auton( void ){
 
     button Auto8Btn = button(190,50,100,100,false,color::purple);    //Pskils; 
 
+    //track if the button is being touched
     Auto0Btn.update();
     Auto1Btn.update();
     Auto2Btn.update();
@@ -172,22 +174,22 @@ void autonomous( void ) {
     setSwivel(100,-100);
     wait(500);
 
-    setDriveNew(90, 17);
-    wait(2000);
-    setDriveNew(90, 0, 90);
-    wait(1500);
-    setDriveNew(90, 17);
-    wait(2000);
-    setDriveNew(90, 0, 90);
-    wait(1500);
-    setDriveNew(90, 17);
-    wait(2000);
-    setDriveNew(90, 0, 90);
-    wait(1500);
-    setDriveNew(90, 17);
-    wait(2000);
-    setDriveNew(90, 0, 90);
-    wait(1000000);
+    setDrive(80, 14);
+    wait(900);
+    setRoller(-100,3000);
+    wait(300);
+
+    setSwivel(100, 1900);  //raise tower
+    wait(1300);
+    setSwivel(30, 2800);
+    wait(900);
+
+    setDrive(70,-12,0);   //back up away from stack
+    setRoller(-60,500);
+    wait(1300);
+    setSwivel(70,-10);
+
+    
 
     //stop subsystem threads
     DriveControl.interrupt();

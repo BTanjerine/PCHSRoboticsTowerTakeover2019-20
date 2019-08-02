@@ -16,6 +16,7 @@
 #include "v5.h"
 #include "v5_vcs.h"
 #include "utilities.h"
+#include "vision-config.h"
 
 vex::competition Competition = vex::competition();
 
@@ -58,7 +59,7 @@ void trackPos(){
 }
 
 void driveControl(){
-   int turn;
+  int turn;
   int correction;
   int driveLft = 0;
   int driveRgt = 0;
@@ -109,7 +110,12 @@ void driveControl(){
         correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.followAng)));
       }
       else{
-        correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.initAng)));
+        if(turn == 0){
+          correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.initAng)));
+        }
+        else{
+          correction = 0;
+        }
       }
     }
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot

@@ -46,6 +46,10 @@ class intake{
     return (RgtRoller.rotation(rotationUnits::raw) + LftRoller.rotation(rotationUnits::raw))/2;
   }
 
+  void trackTopCubes(){
+    
+  }
+
   //move swivel
   void moveSwivel(int power){
     swivel.spin(directionType::fwd,power,velocityUnits::pct);
