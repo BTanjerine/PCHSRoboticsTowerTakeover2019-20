@@ -25,8 +25,8 @@ vex::brain             Brain;
 vex::motor             RgtArm(vex::PORT14, vex::gearSetting::ratio36_1, false);
 vex::motor             LftArm(vex::PORT15, vex::gearSetting::ratio36_1, true);
 vex::motor             swivel(vex::PORT17, vex::gearSetting::ratio36_1, false);
-vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio18_1, true);
-vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio18_1, false);
+vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio36_1, true);
+vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio36_1, false);
 
 vex::pot               arm_pot(Brain.ThreeWirePort.A);
 
@@ -42,6 +42,8 @@ using namespace std;
 drive Drive;
 #include "arm.h"
 arm Arm;
+#include "camera.h"
+EYE roboEye;
 #include "intake.h"
 intake Intake;
 
@@ -166,8 +168,14 @@ void intakeControl(){
       else if(Intake.rollerSpeed < 0 && Intake.getRollerPos() <= -Intake.rollerRot) {Intake.rollerState = false;}
     }
     else{
-      //hold intake roller position to hold cubes
-      Intake.stopRoller(brakeType::hold);
+      if(!Intake.isCoasting){
+        //hold intake roller position to hold cubes
+        Intake.stopRoller(brakeType::hold);
+      }
+      else{
+        Intake.stopRoller(brakeType::coast);
+      }
+      
     }
     wait(10);
   }

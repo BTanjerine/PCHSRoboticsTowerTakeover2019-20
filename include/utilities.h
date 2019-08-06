@@ -74,6 +74,12 @@ int PIDCalcError(int limitPower, float error, float kp, float ki, float kd) {
   return output; // output output power
 }
 
+typedef struct Obj{
+  int x;
+  int y;
+  vex::color colr;
+} _obj;
+
 // position and angle
 typedef struct Pos {
   float x;

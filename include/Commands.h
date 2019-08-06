@@ -31,11 +31,12 @@ void setSwivel(int power, int pos){
   Intake.swiveldesPos = pos;
 }
 
-void setRoller(int power, int pos){
+void setRoller(int power, int pos, bool iscoast = false){
   Intake.rollerReset();
   Intake.rollerSpeed = power;
   Intake.rollerRot = pos;
   Intake.rollerState = true;
+  Intake.isCoasting = iscoast;
 }
 
 void pickUp(int times, int frequency = 800, float dist = 8.5){

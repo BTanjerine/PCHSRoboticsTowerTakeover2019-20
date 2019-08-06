@@ -110,6 +110,8 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
+  autoOptions = 1;
+
   if(autoOptions == 0){
     //deploy rollers
     setSwivel(100, 1000);
@@ -174,22 +176,57 @@ void autonomous( void ) {
     setSwivel(100,-100);
     wait(500);
 
-    setDrive(80, 14);
-    wait(900);
-    setRoller(-100,3000);
-    wait(300);
+    //move to first cube
+    setDrive(100,20,0);
+    setRoller(100,20000);
+    wait(1000);
 
-    setSwivel(100, 1900);  //raise tower
+    pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,850,9.2);
+    wait(600);
+
+    setDrive(90,0,30);
+    wait(400);
+    setRoller(0,0);
+
+    setDrive(90, -32);
+    wait(1900);
+
+    setDrive(90, -15, -30);
+    setRoller(100, 200000);
+    wait(600);
+
+    setDrive(100,12.5,0);
+    setRoller(100,20000);
+    wait(850);
+
+    /*pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,850,9.2);
+    pickUp(1,790,10.3);*/
+    setDrive(75, 25);
+    wait(2000);
+
+    setDrive(90, -20);
+    wait(1100);
+
+    setDrive(70,0,-145);//-175
+    wait(500);
+    setRoller(0, 0);
+    wait(1500);
+
+    setDrive(100,22,0);  //move to zone
     wait(1300);
-    setSwivel(30, 2800);
-    wait(900);
 
-    setDrive(70,-12,0);   //back up away from stack
-    setRoller(-60,500);
+    setSwivel(100, 2100);  //raise tower
+    Intake.stopRoller(brakeType::coast);
+    wait(1100);
+    setSwivel(30, 2800);
+    wait(500);
+
+    setDrive(90,-12,0);   //back up away from stack
+    setRoller(-90,600);
     wait(1300);
     setSwivel(70,-10);
-
-    
 
     //stop subsystem threads
     DriveControl.interrupt();
@@ -212,33 +249,66 @@ void autonomous( void ) {
     setRoller(100,20000);
     wait(850);
 
-    pickUp(1,770,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,830,9.2);
-    pickUp(1,780,10.3);
-    wait(900);
+    pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,850,9.2);
+    pickUp(1,790,10.3);
+    wait(400);
     setRoller(0,0);
+    wait(100);
 
-    Drive.drivePID.changePID(5, 0.3125, 1.25);
-    setDrive(80,14,33); //swerve to green cube next to tower
-    wait(50);
-    setRoller(100,5000);
+    setDrive(80,14,33,0.625); //sharp swerve to green cube next to tower
+    wait(100);
+    setRoller(100,6000);
     wait(1000);
 
-    setDrive(80,-14,0.01);
+    setDrive(80,-14,-33);
     wait(700);
 
-    Drive.drivePID.changePID(8, 0.5, 2);
+    setDrive(80,-9,0);  //back up
+    setRoller(0, 0);
+    wait(850);
+    
+    setDrive(70,0,-143);//-175
+    wait(2050);
 
-    setDrive(80,-4.5,0);  //back up
-    wait(700);
-    //setRoller(0,0);
-
-    setDrive(70,0,-147.7);//-175
-    wait(1700);
-
-    setRoller(-100,200);
-    setDrive(100,27,0);  //move to zone
+    setDrive(100,26,0);  //move to zone
+    setRoller(-100,260);
     wait(500);
+
+    //if 6 cubes
+    if(Intake.trackTopCubes(vex::color::green)){
+      wait(1000);
+
+      setSwivel(100, 2100);  //raise tower
+      Intake.stopRoller(brakeType::coast);
+      wait(1100);
+      setSwivel(30, 2800);
+      wait(500);
+
+      setDrive(90,-12,0);   //back up away from stack
+      setRoller(-90,600);
+      wait(1300);
+      setSwivel(70,-10);
+    }
+    //if not
+    else{
+      wait(1000);
+      //setRoller(-100,400);
+      //wait(300);
+
+      setSwivel(100, 2100);  //raise tower
+      Intake.stopRoller(brakeType::coast);
+      setDrive(10,10);
+      wait(1100);
+      setSwivel(30, 2800);
+      wait(500);
+
+      setRoller(-90,600);
+      setDrive(90,-12,0);   //back up away from stack
+      wait(1300);
+      setSwivel(70,-10);
+    }
+    /*
     //setRoller(100,1500);
     wait(1000);
 
@@ -250,7 +320,7 @@ void autonomous( void ) {
     setDrive(70,-12,0);   //back up away from stack
     setRoller(-60,500);
     wait(1300);
-    setSwivel(70,-10);
+    setSwivel(70,-10);*/
     
     //stop subsystem threads
     DriveControl.interrupt();
@@ -831,6 +901,10 @@ void usercontrol( void ) {
   int lft = 0;
   int pastPos;
 
+  int test;
+  int test2;
+  int test3;
+
   Brain.Screen.clearScreen();
   Brain.resetTimer();
 
@@ -843,8 +917,13 @@ void usercontrol( void ) {
   Drive.reset();
 
   while (1){
+    test = Intake.trackTopCubes(color::orange);
+    test2 = Intake.trackTopCubes(color::green);
+    test3 = Intake.trackTopCubes(vex::color::purple);
+
     rgt = Joystick.Axis2.value()*0.95; 
     lft = Joystick.Axis3.value()*0.95;
+
     if(Joystick.ButtonDown.pressing()){
       Drive.move_drive(10, 10);
     }
@@ -852,8 +931,9 @@ void usercontrol( void ) {
       Drive.move_drive(lft, rgt);
     }
     
-    Brain.Screen.printAt(20, 20, "x: %f", Drive.getLeftPosInches());
-    Brain.Screen.printAt(200, 100, "p1y: %f", Drive.getRightPosInches());
+    Brain.Screen.printAt(20, 20, "x: %d", test);
+    Brain.Screen.printAt(20, 40, "x: %d", test2);
+    Brain.Screen.printAt(20, 60, "x: %d", test3);
     /*Brain.Screen.printAt(200, 140, "p2x: %f", followLine.p2.x);
     Brain.Screen.printAt(200, 160, "p2y: %f", followLine.p2.y);*/
 
@@ -884,7 +964,7 @@ void usercontrol( void ) {
       Intake.moveRoller(-5);
     }
     else{
-      Intake.stopRoller(brakeType::coast);
+      Intake.stopRoller(brakeType::hold);
     }
 
     //move swivel forward/ back when button is pressed
