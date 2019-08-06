@@ -850,6 +850,11 @@ void usercontrol( void ) {
   int test2;
   int test3;
 
+  int i;
+  int org_val;
+  int grn_val;
+  int pur_val;
+
   Brain.Screen.clearScreen();
   Brain.resetTimer();
 
@@ -862,9 +867,17 @@ void usercontrol( void ) {
   Drive.reset();
 
   while (1){
-    test = Intake.trackTopCubes(color::orange);
-    test2 = Intake.trackTopCubes(color::green);
-    test3 = Intake.trackTopCubes(vex::color::purple);
+    for(i=0; i<3; i++){
+      if(i == 0){Vision.takeSnapshot(SIG_1);}
+      else if(i == 1){Vision.takeSnapshot(SIG_2);}
+      else if(i == 2){Vision.takeSnapshot(SIG_3);}
+
+      if(roboEye.isExisting()){
+        if(i == 0){}
+        if(i == 1){}
+        if(i == 2){}
+      }
+    }
 
     rgt = Joystick.Axis2.value()*0.95; 
     lft = Joystick.Axis3.value()*0.95;
@@ -876,9 +889,7 @@ void usercontrol( void ) {
       Drive.move_drive(lft, rgt);
     }
     
-    Brain.Screen.printAt(20, 20, "x: %d", test);
-    Brain.Screen.printAt(20, 40, "x: %d", test2);
-    Brain.Screen.printAt(20, 60, "x: %d", test3);
+
     /*Brain.Screen.printAt(200, 140, "p2x: %f", followLine.p2.x);
     Brain.Screen.printAt(200, 160, "p2y: %f", followLine.p2.y);*/
 
