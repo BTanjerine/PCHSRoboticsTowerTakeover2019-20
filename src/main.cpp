@@ -110,7 +110,7 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
-  autoOptions = 2;
+  autoOptions = 1;
 
   if(autoOptions == 0){
     //deploy rollers
@@ -169,6 +169,69 @@ void autonomous( void ) {
   }
   
   if(autoOptions == 1){
+    
+    //deploy rollers
+    setSwivel(100, 1000);
+    wait(500);
+    setRoller(100,3000);
+    setSwivel(100,-100);
+    wait(500);
+
+    //move to first cube
+    setDrive(100,13.5,0);
+    setRoller(100,20000);
+    wait(1000);
+
+    setDrive(65, 35); //23
+    wait(1700);
+
+    /*
+    pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,850,9.2);
+    wait(600);*/
+
+    setDrive(90,0,-28);
+    wait(400);
+    setRoller(0,0);
+
+    setDrive(90, -32);
+    wait(1700);
+
+    setDrive(90, -15, 28);
+    setRoller(100, 200000);
+    wait(600);
+
+    setDrive(100,10.5,0);
+    setRoller(100,20000);
+    wait(850);
+
+    /*pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,850,9.2);
+    pickUp(1,790,10.3);*/
+    setDrive(75, 29);
+    wait(2000);
+
+    setDrive(90, -20);
+    wait(1100);
+
+    setDrive(70,0,-145);//-175
+    wait(500);
+    setRoller(0, 0);
+    wait(1500);
+
+    setDrive(100,22,0);  //move to zone
+    wait(1300);
+
+    setSwivel(100, 2100);  //raise tower
+    Intake.stopRoller(brakeType::coast);
+    wait(1100);
+    setSwivel(30, 2800);
+    wait(500);
+
+    setDrive(90,-12,0);   //back up away from stack
+    setRoller(-90,600);
+    wait(1300);
+    setSwivel(70,-10);
 
     //stop subsystem threads
     DriveControl.interrupt();
@@ -873,13 +936,21 @@ void usercontrol( void ) {
       else if(i == 2){Vision.takeSnapshot(SIG_3);}
 
       if(roboEye.isExisting()){
-        if(i == 0){}
-        if(i == 1){}
-        if(i == 2){}
+        if(i == 0){grn_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
+        else{grn_val = 0;}
+        if(i == 1){org_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
+        else{org_val = 0;}
+        if(i == 2){pur_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
+        else{pur_val = 0;}
+
       }
     }
 
-    rgt = Joystick.Axis2.value()*0.95; 
+    Brain.Screen.printAt(20, 20, "grn %d", grn_val);
+    Brain.Screen.printAt(20, 40, "org %d", org_val);
+    Brain.Screen.printAt(20, 60, "pur %d", pur_val);
+
+    rgt = Joystick.Axis2.value()*0.95;
     lft = Joystick.Axis3.value()*0.95;
 
     if(Joystick.ButtonDown.pressing()){
@@ -888,10 +959,6 @@ void usercontrol( void ) {
     else{
       Drive.move_drive(lft, rgt);
     }
-    
-
-    /*Brain.Screen.printAt(200, 140, "p2x: %f", followLine.p2.x);
-    Brain.Screen.printAt(200, 160, "p2y: %f", followLine.p2.y);*/
 
     //move arm up/ down when buttons is pressed
     if(Joystick.ButtonL1.pressing()){
@@ -925,7 +992,7 @@ void usercontrol( void ) {
 
     //move swivel forward/ back when button is pressed
     if(Joystick.ButtonUp.pressing()){
-      Intake.moveSwivel(95);
+      Intake.moveSwivel(100);
     }
     else if(Joystick.ButtonRight.pressing()){
       Intake.moveSwivel(30);
