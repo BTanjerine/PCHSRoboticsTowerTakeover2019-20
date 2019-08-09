@@ -110,7 +110,7 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
-  autoOptions = 1;
+  autoOptions = 2;
 
   if(autoOptions == 0){
     //deploy rollers
@@ -169,69 +169,6 @@ void autonomous( void ) {
   }
   
   if(autoOptions == 1){
-    
-    //deploy rollers
-    setSwivel(100, 1000);
-    wait(500);
-    setRoller(100,3000);
-    setSwivel(100,-100);
-    wait(500);
-
-    //move to first cube
-    setDrive(100,13.5,0);
-    setRoller(100,20000);
-    wait(1000);
-
-    setDrive(65, 35); //23
-    wait(1700);
-
-    /*
-    pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,850,9.2);
-    wait(600);*/
-
-    setDrive(90,0,-28);
-    wait(400);
-    setRoller(0,0);
-
-    setDrive(90, -32);
-    wait(1700);
-
-    setDrive(90, -15, 28);
-    setRoller(100, 200000);
-    wait(600);
-
-    setDrive(100,10.5,0);
-    setRoller(100,20000);
-    wait(850);
-
-    /*pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,850,9.2);
-    pickUp(1,790,10.3);*/
-    setDrive(75, 29);
-    wait(2000);
-
-    setDrive(90, -20);
-    wait(1100);
-
-    setDrive(70,0,-145);//-175
-    wait(500);
-    setRoller(0, 0);
-    wait(1500);
-
-    setDrive(100,22,0);  //move to zone
-    wait(1300);
-
-    setSwivel(100, 2100);  //raise tower
-    Intake.stopRoller(brakeType::coast);
-    wait(1100);
-    setSwivel(30, 2800);
-    wait(500);
-
-    setDrive(90,-12,0);   //back up away from stack
-    setRoller(-90,600);
-    wait(1300);
-    setSwivel(70,-10);
 
     //stop subsystem threads
     DriveControl.interrupt();
@@ -256,48 +193,52 @@ void autonomous( void ) {
 
     //pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
     //pickUp(1,850,9.2);
-    setDrive(65,17);
+    setDrive(60,17);
     wait(1700);
-    pickUp(1,790,10.3);
-    wait(400);
+    pickUp(1,900,10.3);
+    wait(300);
     setRoller(0,0);
-    wait(100);
+    wait(200);
 
-    setDrive(80,14,33,0.625); //sharp swerve to green cube next to tower
-    wait(100);
     setRoller(100,6000);
-    wait(1000);
-
-    setDrive(80,-14,-33);
-    wait(700);
-
-    setDrive(80,-12,0);  //back up
-    //setRoller(0, 0);
+    setDrive(80,14,33,0.625); //sharp swerve to green cube next to tower
     wait(1100);
+
+    setDrive(80,-5, 0);
+    wait(700);
+    setRoller(0, 0); 
+
+    setDrive(80,0,-33);
+    wait(700);
+    
+    setDrive(60,7.3,0);
+    setRoller(100,7000);  //start roller
+    wait(750);
+
+    setDrive(80,-15.5,0);
+    wait(800);
+    setRoller(0,0);
     
     setDrive(70,0,-143.4);
     wait(2050);
     setRoller(0, 0);
 
-    setDrive(100,23,0);  //move to zone
+    setDrive(100,27,0);  //move to zone
     setRoller(-100,500);
     wait(500);
+    wait(1000);
 
-    //if 6 cubes
-    if(Intake.trackTopCubes(vex::color::green)){
-      wait(1000);
+    setSwivel(100, 2100);  //raise tower
+    setRoller(0, 0, true);
+    wait(1100);
+    setSwivel(30, 2800);
+    wait(500);
 
-      setSwivel(100, 2100);  //raise tower
-      Intake.stopRoller(brakeType::coast);
-      wait(1100);
-      setSwivel(30, 2800);
-      wait(500);
-
-      setDrive(90,-12,0);   //back up away from stack
-      setRoller(-90,600);
-      wait(1300);
-      setSwivel(70,-10);
-    }
+    setDrive(90,-12,0);   //back up away from stack
+    setRoller(-90,600);
+    wait(1300);
+    setSwivel(70,-10);
+    /*
     //if not
     else{
       wait(1000);
@@ -316,7 +257,7 @@ void autonomous( void ) {
       wait(1300);
       setSwivel(70,-10);
     }
-    /*
+
     //setRoller(100,1500);
     wait(1000);
 
