@@ -189,50 +189,49 @@ void autonomous( void ) {
     //move to first cube
     setDrive(100,13.5,0);
     setRoller(100,20000);
-    wait(850);
+    wait(700);
 
-    //pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
-    //pickUp(1,850,9.2);
-    setDrive(60,17);
-    wait(1700);
-    pickUp(1,900,10.3);
-    wait(300);
+    pickUp(1,770,8.2);  //stop and go forward multiple times to pick up cubes
+    pickUp(1,870,8.5);
+    pickUp(1,850,13.8);
     setRoller(0,0);
-    wait(200);
+    wait(100);
 
     setRoller(100,6000);
-    setDrive(80,14,33,0.625); //sharp swerve to green cube next to tower
-    wait(1100);
+    setDrive(80,0,25);
+    wait(600);
+    setDrive(80,6,0); //sharp swerve to green cube next to tower
+    wait(900);
 
-    setDrive(80,-5, 0);
-    wait(700);
+    setDrive(80,-4, 0);
+    wait(500);
     setRoller(0, 0); 
+    wait(200);
 
-    setDrive(80,0,-33);
-    wait(700);
+    setDrive(80,0,-36.4);
+    wait(900);
     
-    setDrive(60,7.3,0);
+    setDrive(60,9.3,0);
     setRoller(100,7000);  //start roller
     wait(750);
 
-    setDrive(80,-15.5,0);
-    wait(800);
+    setDrive(80,-18,0);
+    wait(1600);
     setRoller(0,0);
     
-    setDrive(70,0,-143.4);
+    setDrive(85,0,-146.3);
     wait(2050);
     setRoller(0, 0);
 
     setDrive(100,27,0);  //move to zone
-    setRoller(-100,500);
-    wait(500);
-    wait(1000);
-
-    setSwivel(100, 2100);  //raise tower
-    setRoller(0, 0, true);
+    setSwivel(100, 1200);
+    setRoller(-100,200);
     wait(1100);
-    setSwivel(30, 2800);
-    wait(500);
+
+    setSwivel(100, 3300);  //raise tower
+    wait(100);
+    setRoller(0, 0, true);
+    wait(1200);
 
     setDrive(90,-12,0);   //back up away from stack
     setRoller(-90,600);
@@ -850,15 +849,6 @@ void usercontrol( void ) {
   int lft = 0;
   int pastPos;
 
-  int test;
-  int test2;
-  int test3;
-
-  int i;
-  int org_val;
-  int grn_val;
-  int pur_val;
-
   Brain.Screen.clearScreen();
   Brain.resetTimer();
 
@@ -871,26 +861,6 @@ void usercontrol( void ) {
   Drive.reset();
 
   while (1){
-    for(i=0; i<3; i++){
-      if(i == 0){Vision.takeSnapshot(SIG_1);}
-      else if(i == 1){Vision.takeSnapshot(SIG_2);}
-      else if(i == 2){Vision.takeSnapshot(SIG_3);}
-
-      if(roboEye.isExisting()){
-        if(i == 0){grn_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
-        else{grn_val = 0;}
-        if(i == 1){org_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
-        else{org_val = 0;}
-        if(i == 2){pur_val = roboEye.getObjectX(0, roboEye.OG) + roboEye.getObjectW(0);}
-        else{pur_val = 0;}
-
-      }
-    }
-
-    Brain.Screen.printAt(20, 20, "grn %d", grn_val);
-    Brain.Screen.printAt(20, 40, "org %d", org_val);
-    Brain.Screen.printAt(20, 60, "pur %d", pur_val);
-
     rgt = Joystick.Axis2.value()*0.95;
     lft = Joystick.Axis3.value()*0.95;
 
