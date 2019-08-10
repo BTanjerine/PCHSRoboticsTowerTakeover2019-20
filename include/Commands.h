@@ -1,9 +1,10 @@
-void setDrive(int power, float drivePos, float turnAngle = 0, float rate = 1, bool slowdown = false){
+void setDrive(int power, float drivePos, float turnAngle = 0, bool isTurnTo = false, float rate = 1, bool slowdown = false){
   //- left + right
 
   //reset enc
   Drive.reset();
-  wait(10);
+
+  Drive.isTurnTo = isTurnTo;
 
   //reset PID values
   Drive.drivePID.changePID(8, 0.5, 2);
@@ -16,9 +17,12 @@ void setDrive(int power, float drivePos, float turnAngle = 0, float rate = 1, bo
     Drive.drivePID.changePID(5*rate, 0.3125*rate, 1.25*rate);
   }
 
+  Drive.initPos.x = Drive.sPos.x;
+  Drive.initPos.y = Drive.sPos.y;
+
   Drive.DesPower = power;             //set power9
-  Drive.desiredAng = turnAngle*1.1;  //convert encoder to angle *1.1 *8.44
-  Drive.initAng = Drive.sPos.Ang;
+  Drive.desiredAng = turnAngle;  //convert encoder to angle *1.1 *8.44
+  Drive.initAng = Drive.getRoboAng();
   Drive.desiredPos = drivePos;        //set drive pos
 }
 

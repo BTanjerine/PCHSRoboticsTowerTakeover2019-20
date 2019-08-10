@@ -3,20 +3,13 @@
 using namespace vex;
 using namespace std;
 
-vex::motor             RgtDrive(vex::PORT12, vex::gearSetting::ratio18_1, true);
-vex::motor             LftDrive(vex::PORT18, vex::gearSetting::ratio18_1, false);
-vex::motor             MidDrive(vex::PORT16, vex::gearSetting::ratio18_1, false);
-
-vex::encoder           rgtEnc(Brain.ThreeWirePort.C);
-vex::encoder           lftEnc(Brain.ThreeWirePort.E);
-vex::encoder           bckEnc(Brain.ThreeWirePort.G);
-
 /***********************
 Drive Subsystem
 ***********************/
 class drive {
 public:
   _pos sPos;
+  _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
   PID turnPID = PID(1.8, 0.1125, 0.45);
@@ -46,6 +39,7 @@ public:
   float lstLft = 0;
   float lstRgt = 0;
   float lstBck = 0;
+  float lstAng = 0;
 
   // desired drive positions for auto
   float desiredPos;
@@ -56,6 +50,7 @@ public:
   float followAng;
 
   bool turning;
+  bool isTurnTo;
 
   // desired drive power
   int DesPower;
@@ -64,14 +59,12 @@ public:
     L = getLeftPosInches() - lstLft; // change in encoder
     R = getRightPosInches() - lstRgt;
     B = getBckPosInches() - lstBck;
+    DeltaAngle = degToRad(getRoboAng()) - lstAng; // find change in robot angle
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
     lstBck = getBckPosInches();
-
-    DeltaAngle = (L - R) / 15; // find change in robot angle
-
-    sPos.Ang += DeltaAngle; // add up change in angle
+    lstAng = degToRad(getRoboAng());
 
     if (DeltaAngle) {
       float radiusRL = R / DeltaAngle; // find the radius of the circle the
@@ -83,13 +76,14 @@ public:
 
       hRL = ((radiusRL + sideToMid) * sinHA) * 2.0; // find change in Y
       hB = ((radiusB + bckToMid) * sinHA) * 2.0;    // find change in X
-    } else {
+    } 
+    else {
       halfAng = 0; // reset half
       hRL = R;
       hB = B;
     }
 
-    float EndAng = (halfAng + sPos.Ang); // find ending angle
+    float EndAng = (halfAng + degToRad(getRoboAng())); // find ending angle
 
     float sinEA = sin(EndAng); // calculate sin cos of ending angle
     float cosEA = cos(EndAng);
@@ -109,7 +103,9 @@ public:
   }
 
   // get current position of mid wheel
-  int getMidPosition() { return MidDrive.rotation(rotationUnits::raw); }
+  int getMidPosition() {
+    return MidDrive.rotation(rotationUnits::raw); 
+  }
 
   // current postion of drive side (right)
   int getRightPosition() {
@@ -140,6 +136,10 @@ public:
   float getRightPosInches() {
     // convert to inches
     return -rgtEnc.rotation(rotationUnits::raw) * QEncToInches;
+  }
+
+  float getRoboAng(){
+    return roboGyro.value(rotationUnits::raw)/10;
   }
 
   void resetRobotPos() {

@@ -27,6 +27,14 @@ vex::motor             LftArm(vex::PORT15, vex::gearSetting::ratio36_1, true);
 vex::motor             swivel(vex::PORT17, vex::gearSetting::ratio36_1, false);
 vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio36_1, true);
 vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio36_1, false);
+vex::motor             RgtDrive(vex::PORT12, vex::gearSetting::ratio18_1, true);
+vex::motor             LftDrive(vex::PORT18, vex::gearSetting::ratio18_1, false);
+vex::motor             MidDrive(vex::PORT16, vex::gearSetting::ratio18_1, false);
+
+vex::encoder           rgtEnc(Brain.ThreeWirePort.C);
+vex::encoder           lftEnc(Brain.ThreeWirePort.E);
+vex::encoder           bckEnc(Brain.ThreeWirePort.G);
+vex::gyro              roboGyro(Brain.ThreeWirePort.B);
 
 vex::pot               arm_pot(Brain.ThreeWirePort.A);
 
@@ -74,15 +82,21 @@ void driveControl(){
   //make following line 
   _line followLine;
 
-  Drive.reset();
+  //Drive.reset();
   
   while(1){
     Drive.trackPos();
 
     //if planning to turn robot
     if(Drive.desiredAng != 0){
-      //PID to turn robot to correct angle
-      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
+      if(Drive.isTurnTo){
+        //PID to turn robot to correct angle
+        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+      }
+      else{
+        //PID to turn robot to correct angle
+        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng + Drive.desiredAng)));
+      }
     }
     else {turn=0;} //dont turn robot 
 
@@ -92,10 +106,10 @@ void driveControl(){
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
       
-      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 2){
+      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.8){
         //set points for the line the robot has to follow
-        followLine.p1.x = Drive.sPos.x; //start
-        followLine.p1.y = Drive.sPos.y;
+        followLine.p1.x = Drive.initPos.x; //start
+        followLine.p1.y = Drive.initPos.y;
 
         followLine.p2.x = Drive.desiredPos * sinf(Drive.desiredAng);  //end
         followLine.p2.y = Drive.desiredPos * cosf(Drive.desiredAng);
@@ -109,11 +123,11 @@ void driveControl(){
         }      
 
         //calculate the correcting power
-        correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.followAng)));
+        correction = -Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (radToDeg(Drive.followAng))));
       }
       else{
-        if(turn == 0){
-          correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), radToDeg(Drive.initAng)));
+        if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4)){
+          correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
         }
         else{
           correction = 0;
