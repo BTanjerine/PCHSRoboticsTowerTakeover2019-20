@@ -188,44 +188,43 @@ void autonomous( void ) {
 
     //move to first cube
     setDrive(100,13.5,0);
+    wait(300);
     setRoller(100,20000);
-    wait(700);
+    wait(400);
 
     pickUp(1,770,8.2);  //stop and go forward multiple times to pick up cubes
     pickUp(1,870,8.5);
-    pickUp(1,850,13.8);
+    pickUp(1,830,13.8);
     setRoller(0,0);
-    wait(100);
+    wait(300);
 
     setRoller(100,6000);
-    setDrive(80,0,25);
+    setDrive(80,0,23);
     wait(600);
-    setDrive(80,6,0); //sharp swerve to green cube next to tower
-    wait(900);
+    setDrive(60,8,0); 
+    wait(700);
 
-    setDrive(80,-4, 0);
+    setDrive(80,-8.5, -31, 0.625);
     wait(500);
     setRoller(0, 0); 
-    wait(200);
-
-    setDrive(80,0,-36.4);
-    wait(900);
+    wait(400);
     
-    setDrive(60,9.3,0);
+    setDrive(59,11.3,0);
     setRoller(100,7000);  //start roller
-    wait(750);
+    wait(1000);
 
     setDrive(80,-18,0);
     wait(1600);
     setRoller(0,0);
     
-    setDrive(85,0,-146.3);
-    wait(2050);
+    setDrive(85,0,-144.3);
+    wait(200);
     setRoller(0, 0);
+    wait(1950);
 
-    setDrive(100,27,0);  //move to zone
-    setSwivel(100, 1200);
-    setRoller(-100,200);
+    setDrive(100,26,0);  //move to zone
+    setSwivel(100, 1300);
+    setRoller(-100,400);
     wait(1100);
 
     setSwivel(100, 3300);  //raise tower

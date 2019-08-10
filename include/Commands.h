@@ -3,6 +3,7 @@ void setDrive(int power, float drivePos, float turnAngle = 0, float rate = 1, bo
 
   //reset enc
   Drive.reset();
+  wait(10);
 
   //reset PID values
   Drive.drivePID.changePID(8, 0.5, 2);

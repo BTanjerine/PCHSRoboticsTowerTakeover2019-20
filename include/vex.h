@@ -89,10 +89,10 @@ void driveControl(){
     //if planning to move robot 
     if(Drive.desiredPos != 0){
       //PID to move robot to position
-      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
-      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
+      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
       
-      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.5){
+      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 2){
         //set points for the line the robot has to follow
         followLine.p1.x = Drive.sPos.x; //start
         followLine.p1.y = Drive.sPos.y;
