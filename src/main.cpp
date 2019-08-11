@@ -111,7 +111,7 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
-  autoOptions = 1;
+  autoOptions = 8;
 
   if(autoOptions == 0){
     //deploy rollers
@@ -171,63 +171,62 @@ void autonomous( void ) {
   
   if(autoOptions == 1){
     //deploy rollers
-    setSwivel(100, 1000);
-    wait(500);
+    setSwivel(100, 1200);
+    wait(600);
     setRoller(100,3000);
     setSwivel(100,-100);
-    wait(500);
+    wait(100);
+    setRoller(100,20000);   //move to first cube
+    setDrive(100,16);
+    wait(400);
 
-    //move to first cube
-    setDrive(100,13.5,0);
+    setDrive(60, 35); //23
+    wait(1700);
+
+    setDrive(90,0,18);
+    wait(400);
+
+    setDrive(90, -37.5);
+    wait(400);
+    setRoller(0,0);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 5) || (fabs(LftDrive.velocity(percentUnits::pct)) > 5)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
+
+    setDrive(90, -15, -0.01, true, 0.7);
+    wait(1000);
+    setRoller(100, 200000);
+
+    setDrive(75, 40.5);
+    wait(700);
     setRoller(100,20000);
     wait(1000);
 
-    setDrive(65, 35); //23
-    wait(1700);
+    setDrive(90, -9);
+    wait(1000);
 
-    /*
-    pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,850,9.2);
-    wait(600);*/
+    setDrive(90,0,-150.5,true);
+    wait(900);
+    setRoller(0, 0, true);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 2) || (fabs(LftDrive.velocity(percentUnits::pct)) > 2)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
 
-    setDrive(90,0,-28);
-    wait(400);
-    setRoller(0,0);
-
-    setDrive(90, -32);
-    wait(1700);
-
-    setDrive(90, -15, 28);
-    setRoller(100, 200000);
-    wait(600);
-
-    setDrive(100,10.5,0);
-    setRoller(100,20000);
-    wait(850);
-
-    /*pickUp(1,790,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,850,9.2);
-    pickUp(1,790,10.3);*/
-    setDrive(75, 29);
-    wait(2000);
-
-    setDrive(90, -20);
-    wait(1100);
-
-    setDrive(70,0,-145);//-175
+    setSwivel(100, 1300);
+    setDrive(80,19.5,-150.5,true,1,true);  //move to zone
+    setRoller(-100,400);
     wait(500);
-    setRoller(0, 0);
-    wait(1500);
+    wait(800);
 
-    setDrive(100,22,0);  //move to zone
-    wait(1300);
-
-    setSwivel(100, 2100);  //raise tower
-    wait(1100);
-    setSwivel(30, 2800);
-    wait(500);
+    setSwivel(100, 3450);  //raise tower
+    wait(100);
+    setRoller(0, 0, true);
+    wait(1600);
 
     setDrive(90,-12,0);   //back up away from stack
+    setSwivel(60, 3600);
     setRoller(-90,600);
     wait(1300);
     setSwivel(70,-10);
@@ -341,7 +340,16 @@ void autonomous( void ) {
   }
 
   if(autoOptions == 3){
+    setSwivel(100, 1000);
+    wait(1000);
     
+    setDrive(70,38,0,0);
+    wait(100000);
+
+    
+
+    Brain.Screen.printAt(20,20,"done");
+    wait(1000000);
     //stop subsystem threads
     DriveControl.interrupt();
     ArmControl.interrupt();
@@ -405,8 +413,66 @@ void autonomous( void ) {
   }
 
   if(autoOptions == 5){
+    //deploy rollers
+    setSwivel(100, 1200);
+    wait(600);
+    setRoller(100,3000);
+    setSwivel(100,-100);
+    wait(100);
+    setRoller(100,20000);   //move to first cube
+    setDrive(100,16);
+    wait(400);
 
-    setDrive(100, 20.0, 0);
+    setDrive(60, 35); //23
+    wait(1700);
+
+    setDrive(90,0,-18);
+    wait(400);
+
+    setDrive(90, -39.5);
+    wait(400);
+    setRoller(0,0);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 5) || (fabs(LftDrive.velocity(percentUnits::pct)) > 5)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
+
+    setDrive(90, -15, 0.01, true, 0.7);
+    wait(1000);
+    setRoller(100, 200000);
+
+    setDrive(75, 41);
+    wait(700);
+    setRoller(100,20000);
+    wait(1000);
+
+    setDrive(90, -9);
+    wait(1000);
+
+    setDrive(90,0,148.5,true);
+    wait(900);
+    setRoller(0, 0, true);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 2) || (fabs(LftDrive.velocity(percentUnits::pct)) > 2)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
+
+    setSwivel(100, 1300);
+    setDrive(80,19,148.5,true,1,true);  //move to zone
+    setRoller(-100,600);
+    wait(500);
+    wait(800);
+
+    setSwivel(100, 3550);  //raise tower
+    wait(100);
+    setRoller(0, 0, true);
+    wait(1600);
+
+    setDrive(90,-12,0);   //back up away from stack
+    setSwivel(80, 3700);
+    setRoller(-90,600);
+    wait(1300);
+    setSwivel(70,-10);
     
 
     
@@ -609,45 +675,8 @@ void autonomous( void ) {
     IntakeControl.interrupt();
   }
   
-  if(autoOptions == 8){/*
-    
-    //deploy rollers
-    setSwivel(100, 1000);
-    wait(500);
-    setRoller(100,3000);
-    setSwivel(100,-100);
-    wait(500);
-
-    //move to first cube
-    setDrive(100,12.5,0);
-    setRoller(100,20000);
-    wait(1000);
-
-    pickUp(3,800,8.9);  //stop and go forward multiple times to pick up cubes
-    wait(200);
-    setRoller(0,0);
-
-    setDrive(80,12.5,35); //swerve to green cube next to tower
-    wait(50);
-    setRoller(100,5000);
-    wait(1000);
-
-    setDrive(80,-4.5,0);  //back up
-    wait(700);
-    setRoller(0,0);
-
-    setDrive(80,0,-3); // turn to other cube next to tower
-    wait(300);
-    wait(300);
-    
-    setDrive(60,7.9,0);
-    setRoller(100,8400);  //start roller
-    wait(1200);
-
-    setDrive(80,-14.5,0);
-    wait(800);
-    setRoller(0,0);*/
-
+  if(autoOptions == 8){
+    /*
     //deploy rollers
     setSwivel(100, 1000);
     wait(500);
@@ -657,58 +686,69 @@ void autonomous( void ) {
 
     //move to first cube
     setDrive(100,13.5,0);
+    wait(300);
     setRoller(100,20000);
-    wait(850);
+    wait(400);
 
     pickUp(1,770,8.2);  //stop and go forward multiple times to pick up cubes
-    pickUp(1,830,9.2);
-    pickUp(1,780,10.3);
-    wait(900);
+    pickUp(1,870,8.5);
+    pickUp(1,800,13.8);
     setRoller(0,0);
-
-    Drive.drivePID.changePID(5, 0.3125, 1.25);
-    setDrive(80,14,33); //swerve to green cube next to tower
     wait(300);
-    setRoller(100,6300);
-    wait(1200);
 
-    setDrive(80,-14,1);
-    wait(700);
+    setRoller(100,6000);
+    setDrive(80,0,23);
+    wait(600);
+    setDrive(60,8,0); 
+    wait(900);
 
-    Drive.drivePID.changePID(8, 0.5, 2);
+    setDrive(80,-15,-0.01,true,0.62);
+    wait(600);
 
-    setDrive(80,-8,0);  //back up
-    wait(700);
+    setDrive(90,-16);
+    wait(1100);
+    
+    setDrive(85,0,-151.6,true);
+    wait(900);
+    setRoller(0, 0);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 2) || (fabs(LftDrive.velocity(percentUnits::pct)) > 2)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
 
-    setDrive(70,0,-144.7);//-175
-    wait(1700);
+    setDrive(100,14,0);  //move to zone
+    setRoller(-100,600);
+    //setSwivel(100, 1300);
+    wait(800);
+    setRoller(0, 0, true);
+    while((fabs(RgtDrive.velocity(percentUnits::pct)) > 2) || (fabs(LftDrive.velocity(percentUnits::pct)) > 2)){
+      //wait(10);
+      Brain.Screen.clearScreen();
+    }
 
-    setRoller(-100,300);
-    setDrive(100,26.5,0);  //move to zone
-    wait(500);
-    //setRoller(100,1500);
-    wait(1000);
+    setSwivel(100, 3500);  //raise tower
+    wait(100);
+    setRoller(0, 0, true);
+    wait(1400);
 
-    setSwivel(100, 1900);  //raise tower
-    wait(1300);
-    setSwivel(30, 2800);
-    wait(1000);
-
-    setDrive(70,-8,0);   //back up away from stack
-    setRoller(-60,500);
+    setDrive(90,-7,0);   //back up away from stack
+    setRoller(-90,600);
     wait(1300);
     setSwivel(70,-10);
+    
 
-    setDrive(90,0,-281);   //turn to tower
+    setDrive(90,0,-285,true);   //turn to tower
     wait(2000);
 
-    setDrive(60,-11,0);     //back up 
-    wait(1000);
-
-    setDrive(90,48.5,0);      //go to cube
+    setDrive(60,-9,0);     //back up 
+    wait(1000);*/
+  
+    wait(1500);
+    
+    setDrive(90,48,0);      //go to cube
     wait(600);
     setRoller(100,12000);
-    wait(2200);
+    wait(2000);
 
     setArm(90,1500);
     wait(1000);
@@ -718,22 +758,22 @@ void autonomous( void ) {
     setArm(70,600);
     wait(1000);
 
-    setDrive(80,-14,-341);
-    wait(1300);
+    setDrive(80,-14,-78);
+    wait(900);
 
     setArm(70,280);
-    wait(1000);
+    wait(800);
 
     setDrive(80,14,0);
     setRoller(100,15000);
-    wait(1300);
+    wait(1000);
 
-    pickUp(2);  //stop and go forward multiple times to pick up cubes
-    wait(500);
+    pickUp(2);
+    wait(200);
     setRoller(0,0);
 
-    setDrive(80,14,-318);
-    wait(1200);
+    setDrive(80,10,30);
+    wait(800);
 
     setArm(100, 2200);
     wait(1400);
@@ -750,7 +790,7 @@ void autonomous( void ) {
     setRoller(70,1100);
     wait(2000);
 
-    setDrive(100,0,-367);
+    setDrive(100,0,-90);
     wait(1000);
 
     setArm(100,1200);
@@ -759,6 +799,9 @@ void autonomous( void ) {
     wait(700);
     setRoller(-100,2000);
     wait(1500);
+
+
+/*
 
     setDrive(60,-20.3,0);
     wait(700);
@@ -814,7 +857,7 @@ void autonomous( void ) {
     setDrive(60,-11,0);   //back up away from stack
     setRoller(-60,500);
     wait(1000);
-    setSwivel(70,-10);
+    setSwivel(70,-10);*/
 
 
 

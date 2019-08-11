@@ -123,10 +123,10 @@ void driveControl(){
         }      
 
         //calculate the correcting power
-        correction = -Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (radToDeg(Drive.followAng))));
+        correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
       }
       else{
-        if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4)){
+        if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5)){
           correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
         }
         else{

@@ -40,14 +40,24 @@ void setRoller(int power, int pos, bool iscoast = false){
   Intake.rollerReset();
   Intake.rollerSpeed = power;
   Intake.rollerRot = pos;
-  Intake.rollerState = true;
+  if(power == 0){
+    Intake.rollerState = false;
+  }
+  else{
+    Intake.rollerState = true;
+  }
   Intake.isCoasting = iscoast;
 }
 
-void pickUp(int times, int frequency = 800, float dist = 8.5){
+void pickUp(int times, int frequency = 800, float dist = 8.5, bool noStr = false){
   int i;
   for(i = 0; i < times; i++){
-    setDrive(90, dist, 0);
+    if(noStr){
+      setDrive(80, dist, 0.001);
+    }
+    else{
+      setDrive(80, dist, 0);
+    }
     wait(frequency);  //900 5.5secs 700 4 secs 800 
   }
 }
