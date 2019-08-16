@@ -9,7 +9,7 @@ using namespace std;
 class arm{
   public:
   //PID constant Values
-  PID armPID = PID(0.1, 0.00625, 0.025);
+  PID armPID = PID(0.1, 0.00525, 0.025);
   
   //desired arm position for auto
   int desiredPos;

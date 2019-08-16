@@ -6,6 +6,7 @@ using namespace std;
 /***********************
 Drive Subsystem
 ***********************/
+
 class drive {
 public:
   _pos sPos;
@@ -138,6 +139,7 @@ public:
     return -rgtEnc.rotation(rotationUnits::raw) * QEncToInches;
   }
 
+  //find angle of robot through gyro 
   float getRoboAng(){
     return roboGyro.value(rotationUnits::raw)/10;
   }
@@ -158,7 +160,7 @@ public:
 
   // clear drive values
   void reset() {
-    RgtDrive.resetRotation(); // reset drive encoders
+    RgtDrive.resetRotation(); // reset drive sensors
     LftDrive.resetRotation();
 
     rgtEnc.resetRotation();
@@ -178,7 +180,7 @@ public:
   // set drive speed
   void move_drive(int lftPow, int rgtPow) {
     int midPow;
-    // limti power to 100%
+    // limit power to 100%
     if (lftPow > 100) {
       lftPow = 100;
     } else if (lftPow < -100) {
@@ -191,6 +193,7 @@ public:
       rgtPow = -100;
     }
 
+    //prevent the middle motor from spinning when robot is turning
     if ((rgtPow < 0 && lftPow > 0) || (rgtPow > 0 && lftPow < 0)) {
       midPow = 0;
     } else {
