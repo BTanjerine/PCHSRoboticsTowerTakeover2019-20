@@ -8,6 +8,7 @@ class button {
     private:
     
     public:
+    //position of the button on screen
     int x = 0;
     int y = 0;
     int h = 0;
@@ -15,10 +16,11 @@ class button {
     color BtnColr;
     
     button(int X, int Y, int H, int W, bool ColrTog, color Colr){
-        x = X;
+        x = X;  //set positions
         y = Y;
         h = H;
         w = W;
+        //set color if need color
         if(ColrTog == false){
             if(buttonState == true){BtnColr = Colr;}
             else{BtnColr = color::transparent;}
@@ -26,11 +28,12 @@ class button {
        else{
            BtnColr = Colr;
        }
-        
-        Brain.Screen.drawRectangle(x, y, w, h, BtnColr);
+      //show button
+      Brain.Screen.drawRectangle(x, y, w, h, BtnColr);
     }
     
     ~button(){
+      //delete button if done
         Brain.Screen.clearScreen();
     }
     
@@ -43,6 +46,7 @@ class button {
     }
     
     void update(){
+      //check if button is being pressed or not
         if((Brain.Screen.xPosition() >= x && Brain.Screen.xPosition() <= x+w) &&
            (Brain.Screen.yPosition() >= y && Brain.Screen.yPosition() <= y+h)){
             
@@ -54,6 +58,7 @@ class button {
     }
     
     void waitforRelease(){
+      //wait for button to be released
         while((Brain.Screen.xPosition() >= x && Brain.Screen.xPosition() <= x+w) &&
            (Brain.Screen.yPosition() >= y && Brain.Screen.yPosition() <= y+h)) {wait(10);}
     }

@@ -1,13 +1,15 @@
 using namespace vex;
 using namespace std;
 
+#define ARMTOP   9000
+
 /***********************
  Arm Subsystem
 ***********************/
 class arm{
   public:
   //PID constant Values
-  PID armPID = PID(0.1, 0.00625, 0.025);
+  PID armPID = PID(0.1, 0.00525, 0.025);
   
   //desired arm position for auto
   int desiredPos;
@@ -17,7 +19,7 @@ class arm{
   //clear arm values
   void reset(){
     //reset desired positions
-    desiredPos = 0;     
+    desiredPos = 260;     
     DesPower = 0;
   }    
   

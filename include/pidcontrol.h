@@ -29,12 +29,14 @@ class PID{
   }
 
   void changePID(float newKp, float newKi, float newKd){
+    //change values 
     Kp = newKp;
     Ki = newKi;
     Kd = newKd;
   }
 
   float getError(float curVal, float desVal){
+    //find error
     return desVal - curVal;
   }
 
@@ -62,6 +64,8 @@ class PID{
   }
 
   int getOutputPower(int pctPower, float error){
+
+    //add up all pid values
     PctPower = getP(error) + getI(error) + getD(error, pastError);
     if(PctPower > pctPower){PctPower = pctPower;}
     if(PctPower < -pctPower){PctPower = -pctPower;}
