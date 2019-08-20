@@ -30,9 +30,9 @@ void setDrive(int power, float drivePos, float turnAngle = 0, bool isTurnTo = fa
   Drive.desiredPos = drivePos;        //set drive pos
 }
 
-void waitDrive(){
+void waitDrive(int deadzone = 2){
   //wait for drive motors to slow down
-  while((fabs(RgtDrive.velocity(percentUnits::pct)) > 2) || (fabs(LftDrive.velocity(percentUnits::pct)) > 2)){
+  while((fabs(RgtDrive.velocity(percentUnits::pct)) > deadzone) || (fabs(LftDrive.velocity(percentUnits::pct)) > deadzone)){
     Brain.Screen.clearScreen();
   }
 }
