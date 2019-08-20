@@ -148,9 +148,6 @@ void driveControl(){
 
 void ArmPosControl(){
   while(1){
-    /*
-    int ArmPow = -PIDCalculator(Arm.DesPower, Arm.getArmPos(), Arm.getArmPos(),
-    Arm.desiredPos, Arm.kp, Arm.ki, Arm.kd);*/
     int ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
     
     Arm.move_arm(ArmPow);
