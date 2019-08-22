@@ -89,14 +89,8 @@ void driveControl(){
 
     //if planning to turn robot
     if(Drive.desiredAng != 0){
-      if(Drive.isTurnTo){
-        //PID to turn robot to correct angle
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
-      }
-      else{
-        //PID to turn robot to correct angle
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng + Drive.desiredAng)));
-      }
+      //PID to turn robot to correct angle
+      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng + Drive.desiredAng)));
     }
     else {turn=0;} //dont turn robot 
 
