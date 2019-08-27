@@ -17,6 +17,7 @@
 #include "v5_vcs.h"
 #include "utilities.h"
 #include "vision-config.h"
+#include "vision2-config.h"
 
 vex::competition Competition = vex::competition();
 
@@ -51,7 +52,9 @@ drive Drive;
 #include "arm.h"
 arm Arm;
 #include "camera.h"
-EYE roboEye;
+EYE rgtEye(EYE::V2);
+EYE lftEye(EYE::V1);
+
 #include "intake.h"
 intake Intake;
 
@@ -90,7 +93,7 @@ void driveControl(){
     //if planning to turn robot
     if(Drive.desiredAng != 0){
       //PID to turn robot to correct angle
-      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng + Drive.desiredAng)));
+      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
     }
     else {turn=0;} //dont turn robot 
 

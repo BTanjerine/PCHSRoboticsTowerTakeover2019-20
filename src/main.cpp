@@ -113,6 +113,8 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
+  autoOptions = 3;
+
   if(autoOptions == 0){
     //deploy rollers
     setSwivel(100, 1000); //release ramp and rollers
@@ -308,20 +310,9 @@ void autonomous( void ) {
 
   if(autoOptions == 3){
 
-    wait(500);
-    setDrive(90,19,0);      //go to cube
-    wait(600);
-    setRoller(100,12000);   //pick up cube
-    wait(1000);
-
-    setArm(90,1500);          //raise arm to first tower
-    wait(1900);
-    setArm(90,800);      //spit cube out
-    wait(1900);
-    setArm(90,2200);      //spit cube out
-    wait(1900);
-    setArm(90,800);      //spit cube out
-    wait(1900);
+    wait(1500);
+    setDrive(90,0,180);      //go to cube
+    wait(1000000);
 
     Brain.Screen.printAt(20,20,"done");
     wait(1000000);
@@ -735,6 +726,9 @@ void usercontrol( void ) {
   int lft = 0;
   int pastPos;
 
+  int lfte;
+  int rgte;
+
   Brain.Screen.clearScreen();
   Brain.resetTimer();
 
@@ -747,6 +741,17 @@ void usercontrol( void ) {
   Drive.reset();
 
   while (1){
+
+    Vision.takeSnapshot(SIG_1);
+    Vision2.takeSnapshot(SIG1);
+
+    if(lftEye.isExisting() && rgtEye.isExisting()){
+      lfte = Drive.turnPID.getOutputPower(100, Drive.turnPID.getError(lftEye.getObjectX(0, EYE::OG), 1));
+      rgte = Drive.turnPID.getOutputPower(100, Drive.turnPID.getError(rgtEye.getObjectX(0, EYE::OG), 140));
+    }
+    
+    Brain.Screen.printAt(20,20,"%d", lfte);
+    Brain.Screen.printAt(20,40,"%d", rgte);
 
     //link joystick to drive
     rgt = Joystick.Axis2.value()*0.95;

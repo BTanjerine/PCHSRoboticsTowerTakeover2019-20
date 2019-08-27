@@ -13,7 +13,7 @@ public:
   _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.7, 0.10625, 0.425);
+  PID turnPID = PID(1.55, 0.08375, 0.45);
   PID correctionPID = PID(0.7, 0.04375, 0.175);
 
   float bckToMid = 9.0;
