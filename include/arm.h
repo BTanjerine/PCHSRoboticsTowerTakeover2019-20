@@ -1,8 +1,6 @@
 using namespace vex;
 using namespace std;
 
-#define ARMTOP   9000
-
 /***********************
  Arm Subsystem
 ***********************/

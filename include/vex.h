@@ -26,8 +26,8 @@ vex::brain             Brain;
 vex::motor             RgtArm(vex::PORT14, vex::gearSetting::ratio36_1, false);
 vex::motor             LftArm(vex::PORT15, vex::gearSetting::ratio36_1, true);
 vex::motor             swivel(vex::PORT17, vex::gearSetting::ratio36_1, false);
-vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio36_1, true);
-vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio36_1, false);
+vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio18_1, false);
+vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio18_1, true);
 vex::motor             RgtDrive(vex::PORT12, vex::gearSetting::ratio18_1, true);
 vex::motor             LftDrive(vex::PORT18, vex::gearSetting::ratio18_1, false);
 vex::motor             MidDrive(vex::PORT16, vex::gearSetting::ratio18_1, false);
@@ -40,6 +40,11 @@ vex::gyro              roboGyro(Brain.ThreeWirePort.B);
 vex::pot               arm_pot(Brain.ThreeWirePort.A);
 
 vex::controller        Joystick(vex::controllerType::primary);
+
+vex::thread DriveControl;
+vex::thread ArmControl;
+vex::thread SwivelControl;
+vex::thread IntakeControl;
 
 using namespace vex;
 using namespace std;
@@ -61,16 +66,6 @@ intake Intake;
 #include "screen.h"
 #include "Commands.h"
 
-
-void trackPos(){
-  while(1){
-    //track pos of robot
-    Drive.trackPos();
-    //Brain.Screen.printAt(100,100,"%f",Drive.sPos.Ang);
-    wait(10);
-  }
-}
-
 void driveControl(){
   int turn;
   int correction;
@@ -79,6 +74,9 @@ void driveControl(){
   int rgt, lft;
 
   float desDist;
+
+  int MainObjX;
+  int MainObjY;
 
   float initAngle;
 
@@ -91,9 +89,36 @@ void driveControl(){
     Drive.trackPos();
 
     //if planning to turn robot
-    if(Drive.desiredAng != 0){
-      //PID to turn robot to correct angle
-      turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+    if(Drive.desiredAng != Drive.getRoboAng() || Drive.camState){
+      if(!Drive.camState){
+        //PID to turn robot to correct angle
+        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+      }
+      else{
+        if(Drive.colorMode){
+          Vision.takeSnapshot(SIG_1); //start tracking
+          Vision2.takeSnapshot(SIG1);
+        }
+        else{
+          Vision.takeSnapshot(SIG_2);
+          Vision2.takeSnapshot(SIG2);
+        }
+
+        //check if goal is in front
+        if(lftEye.isExisting() && rgtEye.isExisting()){
+          //find goal by find avg position of object from 2 cameras
+          MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
+          MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
+
+          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,89));}
+          else{turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,95));}
+        }
+        else{
+          MainObjX = 90;
+          MainObjY = 0;
+          turn = 0;
+        }
+      }
     }
     else {turn=0;} //dont turn robot 
 
@@ -123,7 +148,7 @@ void driveControl(){
         correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
       }
       else{
-        if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5)){
+        if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5) ){
           correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
         }
         else{
@@ -187,6 +212,54 @@ void intakeControl(){
     }
     wait(10);
   }
+}
+
+void trackZone(bool colorMode, float desDist){
+  int correction;
+  int MainObjX;
+  int MainObjY;
+
+  int pow = 90;
+
+  DriveControl.interrupt();
+
+  while(1){
+    if(colorMode){
+      Vision.takeSnapshot(SIG_1); //start tracking
+      Vision2.takeSnapshot(SIG1);
+    }
+    else{
+      Vision.takeSnapshot(SIG_2);
+      Vision2.takeSnapshot(SIG2);
+    }
+  
+    pow = Drive.drivePID.getOutputPower(90, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, desDist));
+
+    //check if goal is in front
+    if(lftEye.isExisting() && rgtEye.isExisting()){
+      //find goal by find avg position of object from 2 cameras
+      MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
+      MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
+
+      if(colorMode){correction = Drive.visionPID.getOutputPower(50, Drive.visionPID.getError(MainObjX,85));}
+      else{correction = Drive.correctionPID.getOutputPower(50, Drive.correctionPID.getError(MainObjX,110));}
+    }
+    else{
+      MainObjX = 100;
+      MainObjY = 0;
+      correction = 0;
+      pow = 0;
+    }
+
+    Drive.move_drive(pow+correction,pow-correction);
+  }
+
+  Drive.move_drive(0,0);
+
+  Drive.reset();
+  wait(100);
+
+  DriveControl = thread(driveControl);
 }
 
 
