@@ -49,7 +49,7 @@ vex::thread IntakeControl;
 using namespace vex;
 using namespace std;
 
-//initialize robot subsystemS
+//initialize robot subsystems
 #include "pidcontrol.h"
 
 #include "drive.h"
