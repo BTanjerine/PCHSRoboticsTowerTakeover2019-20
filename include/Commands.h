@@ -1,5 +1,5 @@
 
-void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(), float rate = 1, bool slowdown = false){
+void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(),float rate = 1, bool slowdown = false){
   //- left + right
 
   //reset enc
@@ -33,6 +33,16 @@ void waitDrive(int deadzone = 2){
   //wait for drive motors to slow down
   while((fabs(RgtDrive.velocity(percentUnits::pct)) > deadzone) || (fabs(LftDrive.velocity(percentUnits::pct)) > deadzone)){
     Brain.Screen.clearScreen();
+  }
+}
+
+void waitDriveNew(int deadzone = 2, int counterDeadZone = 6){
+  int counter = 0;
+  while(1){
+    if((fabs(RgtDrive.velocity(percentUnits::pct)) < deadzone) && (fabs(LftDrive.velocity(percentUnits::pct)) < deadzone)){
+      counter++;  //start counting how long the drive power is set to 0
+    }
+    if(counter > counterDeadZone){break;}
   }
 }
 
@@ -71,10 +81,10 @@ void pickUp(int times, int frequency = 800, float dist = 8.5, bool noStr = false
   //twitch drive forward
   for(i = 0; i < times; i++){
     if(noStr){
-      setDrive(80, dist, 0.001);
+      setDrive(80, dist);
     }
     else{
-      setDrive(80, dist, 0);
+      setDrive(80, dist);
     }
     wait(frequency);  //900 5.5secs 700 4 secs 800 
   }

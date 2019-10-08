@@ -6,7 +6,7 @@ Drive Subsystem
 ***********************/
 
 class drive {
-public:
+  public:
   _pos sPos;
   _vector initPos;
 
@@ -51,7 +51,7 @@ public:
   float followAng;
 
   bool turning;
-  bool isTurnTo;
+  bool isEncoderTurn;
 
   bool camState;
   bool colorMode;
@@ -64,7 +64,7 @@ public:
     R = getRightPosInches() - lstRgt;
     B = getBckPosInches() - lstBck;
     DeltaAngle = degToRad(getRoboAng()) - lstAng; // find change in robot angle
-    
+
     DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
 
     lstLft = getLeftPosInches(); // record last pos
@@ -74,7 +74,7 @@ public:
 
     if (DeltaAngle) {
       float radiusRL = R / DeltaAngle; // find the radius of the circle the
-                                       // robot travels around using right enc
+                                      // robot travels around using right enc
       float radiusB = B / DeltaAngle; // same as ^^ except the back tracking enc
 
       halfAng = (DeltaAngle / 2.0); // find half the angle traveled
@@ -101,7 +101,7 @@ public:
     sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
     sPos.x += hB * cosEA;  // cos(x) = cos(-x)
 
-    sPos.ang += DeltaEncAngle;  //angle of robot through encoder
+    sPos.Ang += DeltaEncAngle;  //angle of robot through encoder
   }
 
   // current postion of drive side (left)
@@ -221,8 +221,8 @@ public:
     MidDrive.spin(directionType::fwd, midPow, velocityUnits::pct);
   }
 
-  void stopDrive() {
-    RgtDrive.stop(brakeType::brake);
-    LftDrive.stop(brakeType::brake);
+  void stopDrive(brakeType b) {
+    RgtDrive.stop(b);
+    LftDrive.stop(b);
   }
 };

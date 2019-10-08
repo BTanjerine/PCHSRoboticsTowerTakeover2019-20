@@ -15,31 +15,10 @@
 
 #include "v5.h"
 #include "v5_vcs.h"
+#include "robot-config.h"
 #include "utilities.h"
-#include "vision-config.h"
-#include "vision2-config.h"
 
 vex::competition Competition = vex::competition();
-
-vex::brain             Brain;
-
-vex::motor             RgtArm(vex::PORT14, vex::gearSetting::ratio36_1, false);
-vex::motor             LftArm(vex::PORT15, vex::gearSetting::ratio36_1, true);
-vex::motor             swivel(vex::PORT17, vex::gearSetting::ratio36_1, false);
-vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio18_1, false);
-vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio18_1, true);
-vex::motor             RgtDrive(vex::PORT12, vex::gearSetting::ratio18_1, true);
-vex::motor             LftDrive(vex::PORT18, vex::gearSetting::ratio18_1, false);
-vex::motor             MidDrive(vex::PORT16, vex::gearSetting::ratio18_1, false);
-
-vex::encoder           rgtEnc(Brain.ThreeWirePort.C);
-vex::encoder           lftEnc(Brain.ThreeWirePort.E);
-vex::encoder           bckEnc(Brain.ThreeWirePort.G);
-vex::gyro              roboGyro(Brain.ThreeWirePort.B);
-
-vex::pot               arm_pot(Brain.ThreeWirePort.A);
-
-vex::controller        Joystick(vex::controllerType::primary);
 
 vex::thread DriveControl;
 vex::thread ArmControl;
@@ -54,6 +33,7 @@ using namespace std;
 
 #include "drive.h"
 drive Drive;
+
 #include "arm.h"
 arm Arm;
 #include "camera.h"
@@ -91,8 +71,14 @@ void driveControl(){
     //if planning to turn robot
     if(Drive.desiredAng != Drive.getRoboAng() || Drive.camState){
       if(!Drive.camState){
-        //PID to turn robot to correct angle
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+        if(Drive.isEncoderTurn){
+          //PID to turn robot to correct angle with encoders
+          turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
+        }
+        else{
+          //PID to turn robot to correct angle
+          turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+        }
       }
       else{
         if(Drive.colorMode){
@@ -110,13 +96,21 @@ void driveControl(){
           MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
           MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
 
-          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,89));}
-          else{turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,95));}
+          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,85));}
+          else{turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,120));}
         }
         else{
-          MainObjX = 90;
-          MainObjY = 0;
-          turn = 0;
+          if(lftEye.isExisting() && !rgtEye.isExisting()){
+            turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(lftEye.getObjectX(0, EYE::OG),90));
+          }
+          else if(!lftEye.isExisting() && rgtEye.isExisting()){
+            turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(rgtEye.getObjectX(0, EYE::OG),400));
+          }
+          else{
+            MainObjX = 0;
+            MainObjY = 0;
+            turn = 0; 
+          }
         }
       }
     }
@@ -245,6 +239,7 @@ void trackZone(bool colorMode, float desDist){
       else{correction = Drive.correctionPID.getOutputPower(50, Drive.correctionPID.getError(MainObjX,110));}
     }
     else{
+      
       MainObjX = 100;
       MainObjY = 0;
       correction = 0;
@@ -264,3 +259,14 @@ void trackZone(bool colorMode, float desDist){
 
 
 
+
+
+#include "robot-config.h"
+
+#define waitUntil(condition)                                                   \
+  do {                                                                         \
+    wait(5, msec);                                                             \
+  } while (!(condition))
+
+#define repeat(iterations)                                                     \
+  for (int iterator = 0; iterator < iterations; iterator++)
