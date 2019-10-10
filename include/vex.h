@@ -24,8 +24,7 @@ using namespace std;
 #include "pidcontrol.h"
 
 #include "drive.h"
-drive Drive;
-
+PCHSdrive Drive;
 #include "arm.h"
 arm Arm;
 #include "camera.h"

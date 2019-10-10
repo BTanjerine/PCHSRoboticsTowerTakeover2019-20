@@ -5,7 +5,7 @@ using namespace std;
 Drive Subsystem
 ***********************/
 
-class drive {
+class PCHSdrive {
   public:
   _pos sPos;
   _vector initPos;

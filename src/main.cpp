@@ -3,6 +3,26 @@
 // [Name]               [Type]        [Port(s)]
 // RgtArm               motor         14              
 // LftArm               motor         15              
+// swivel               motor         17              
+// RgtRoller            motor         19              
+// LftRoller            motor         11              
+// RgtDrive             motor         12              
+// LftDrive             motor         18              
+// MidDrive             motor         16              
+// arm_pot              pot           A               
+// roboGyro             gyro          B               
+// rgtEnc               encoder       C, D            
+// lftEnc               encoder       E, F            
+// bckEnc               encoder       G, H            
+// Controller1          controller                    
+// Vision               vision        10              
+// Vision2              vision        1               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// RgtArm               motor         14              
+// LftArm               motor         15              
 // swivel               motor         6               
 // RgtRoller            motor         19              
 // LftRoller            motor         11              
@@ -129,7 +149,6 @@ void autonomous( void ) {
   roboGyro.resetAngle();
   Arm.reset();
   Intake.reset();
-
 
   if(autoOptions == 0){
     //deploy rollers

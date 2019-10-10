@@ -2067,9 +2067,9 @@ Linker script and memory map
  .text._Z8setDriveifffb
                 0x03800100       0xfc build/src/main.o
                 0x03800100                setDrive(int, float, float, float, bool)
- .text._ZN5drive5resetEv
+ .text._ZN9PCHSdrive5resetEv
                 0x038001fc       0x84 build/src/main.o
-                0x038001fc                drive::reset()
+                0x038001fc                PCHSdrive::reset()
  .text._Z9waitDrivei
                 0x03800280       0x84 build/src/main.o
                 0x03800280                waitDrive(int)
@@ -2083,15 +2083,15 @@ Linker script and memory map
                 0x03800400      0x63c build/src/main.o
                 0x03800400                driveControl()
  *fill*         0x03800a3c        0x4 
- .text._ZN5drive8trackPosEv
+ .text._ZN9PCHSdrive8trackPosEv
                 0x03800a40      0x2d4 build/src/main.o
-                0x03800a40                drive::trackPos()
+                0x03800a40                PCHSdrive::trackPos()
  .text._ZN3PID14getOutputPowerEif
                 0x03800d14       0xac build/src/main.o
                 0x03800d14                PID::getOutputPower(int, float)
- .text._ZN5drive10move_driveEii
+ .text._ZN9PCHSdrive10move_driveEii
                 0x03800dc0      0x100 build/src/main.o
-                0x03800dc0                drive::move_drive(int, int)
+                0x03800dc0                PCHSdrive::move_drive(int, int)
  .text._Z13ArmPosControlv
                 0x03800ec0       0xac build/src/main.o
                 0x03800ec0                ArmPosControl()
@@ -3128,7 +3128,7 @@ Linker script and memory map
  *(.ARM.exidx*)
  .ARM.exidx.text._Z8setDriveifffb
                 0x0380a3a0        0x8 build/src/main.o
- .ARM.exidx.text._ZN5drive5resetEv
+ .ARM.exidx.text._ZN9PCHSdrive5resetEv
                 0x0380a3a8        0x0 build/src/main.o
                                   0x8 (size before relaxing)
  .ARM.exidx.text._Z9waitDrivei
@@ -3143,13 +3143,13 @@ Linker script and memory map
  .ARM.exidx.text._Z12driveControlv
                 0x0380a3a8        0x0 build/src/main.o
                                   0x8 (size before relaxing)
- .ARM.exidx.text._ZN5drive8trackPosEv
+ .ARM.exidx.text._ZN9PCHSdrive8trackPosEv
                 0x0380a3a8        0x0 build/src/main.o
                                   0x8 (size before relaxing)
  .ARM.exidx.text._ZN3PID14getOutputPowerEif
                 0x0380a3a8        0x0 build/src/main.o
                                   0x8 (size before relaxing)
- .ARM.exidx.text._ZN5drive10move_driveEii
+ .ARM.exidx.text._ZN9PCHSdrive10move_driveEii
                 0x0380a3a8        0x0 build/src/main.o
                                   0x8 (size before relaxing)
  .ARM.exidx.text._Z13ArmPosControlv
