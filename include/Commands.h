@@ -24,7 +24,12 @@ void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(),fl
   Drive.initPos.y = Drive.sPos.y;
 
   Drive.DesPower = power;             //set power
-  Drive.desiredAng = turnAngle;  //set angle to face or sweep to
+  if(Drive.isEncoderTurn && (turnAngle == Drive.getRoboAng())){
+    Drive.desiredAng = radToDeg(Drive.sPos.Ang);  //set angle to face or sweep to
+  }
+  else{
+    Drive.desiredAng = turnAngle;  //set angle to face or sweep to
+  }
   Drive.initAng = Drive.getRoboAng(); //set initial direction facing
   Drive.desiredPos = drivePos;        //set drive pos
 }

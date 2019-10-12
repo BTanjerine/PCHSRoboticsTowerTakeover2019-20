@@ -10,6 +10,12 @@
 #include "robot-config.h"
 #include "utilities.h"
 
+#include "drive.h"
+#include "arm.h"
+#include "camera.h"
+#include "intake.h"
+#include "screen.h"
+
 vex::competition Competition = vex::competition();
 
 vex::thread DriveControl;
@@ -17,24 +23,12 @@ vex::thread ArmControl;
 vex::thread SwivelControl;
 vex::thread IntakeControl;
 
-using namespace vex;
-using namespace std;
-
-//initialize robot subsystems
-#include "pidcontrol.h"
-
-#include "drive.h"
-PCHSdrive Drive;
-#include "arm.h"
-arm Arm;
-#include "camera.h"
 EYE rgtEye(EYE::V2);
 EYE lftEye(EYE::V1);
-
-#include "intake.h"
+arm Arm;
 intake Intake;
+PCHSdrive Drive;
 
-#include "screen.h"
 #include "Commands.h"
 
 void driveControl(){
@@ -59,8 +53,14 @@ void driveControl(){
   while(1){
     Drive.trackPos();
 
+    Brain.Screen.printAt(200,200,"rgt: %f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(200,220,"lft: %f", Drive.getRightPosInches());
+
     //if planning to turn robot
-    if(Drive.desiredAng != Drive.getRoboAng() || Drive.camState){
+    if(Drive.desiredAng != radToDeg(Drive.sPos.Ang) || Drive.camState){
+      Brain.Screen.printAt(200,160,"des: %f", Drive.desiredAng);
+      Brain.Screen.printAt(200,180,"cur: %f", radToDeg(Drive.sPos.Ang)); 
+
       if(!Drive.camState){
         if(Drive.isEncoderTurn){
           //PID to turn robot to correct angle with encoders
@@ -110,31 +110,39 @@ void driveControl(){
     //if planning to move robot 
     if(Drive.desiredPos != 0){
       //PID to move robot to position
-      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
-      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
-      
+
+      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+
       if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.8){
         //set points for the line the robot has to follow
-        followLine.p1.x = Drive.initPos.x; //start
-        followLine.p1.y = Drive.initPos.y;
+        followLine.p1.x = Drive.sPos.x; //start
+        followLine.p1.y = Drive.sPos.y;
 
         followLine.p2.x = Drive.desiredPos * sinf(Drive.desiredAng);  //end
         followLine.p2.y = Drive.desiredPos * cosf(Drive.desiredAng);
 
         //find angle of line
         if(abs(Drive.followAng-Drive.sPos.Ang)>M_PI/2 && abs(Drive.followAng-Drive.sPos.Ang)<(3*M_PI)/2 && Drive.followAng != 0){
-          Drive.followAng = fmod((Drive.followAng+180), 360.0);
+          //change follow angle if the angle is greater than 180 or PI
+          Drive.followAng = fmod((Drive.followAng+M_PI), 2*M_PI);
         }
         else{
           Drive.followAng = lineAngle(followLine); 
         }      
 
-        //calculate the correcting power
-        correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
+        if(!Drive.isEncoderTurn){
+          //calculate the correcting power
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
+        }
+        else{
+          //calculate the correcting power
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + radToDeg(Drive.followAng))));
+        }
       }
       else{
         if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5) ){
-          correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
+          correction = 0;//Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
         }
         else{
           correction = 0;
@@ -144,11 +152,11 @@ void driveControl(){
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
     //set drive power
-    lft = (driveLft+correction) + turn;  
-    rgt = (driveRgt-correction) - turn;
+    lft = (driveLft+0) + turn;  
+    rgt = (driveRgt-0) - turn;
 
     Drive.move_drive(lft, rgt);
-
+    //Brain.Screen.clearScreen();
     wait(10); //prevent cpu hog
   }
 }
@@ -247,17 +255,3 @@ void trackZone(bool colorMode, float desDist){
 
   DriveControl = thread(driveControl);
 }
-
-
-
-
-
-#include "robot-config.h"
-
-#define waitUntil(condition)                                                   \
-  do {                                                                         \
-    wait(5, msec);                                                             \
-  } while (!(condition))
-
-#define repeat(iterations)                                                     \
-  for (int iterator = 0; iterator < iterations; iterator++)

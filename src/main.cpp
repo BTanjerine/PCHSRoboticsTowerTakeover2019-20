@@ -1,43 +1,12 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// RgtArm               motor         14              
-// LftArm               motor         15              
-// swivel               motor         17              
-// RgtRoller            motor         19              
-// LftRoller            motor         11              
-// RgtDrive             motor         12              
-// LftDrive             motor         18              
-// MidDrive             motor         16              
-// arm_pot              pot           A               
-// roboGyro             gyro          B               
-// rgtEnc               encoder       C, D            
-// lftEnc               encoder       E, F            
-// bckEnc               encoder       G, H            
-// Controller1          controller                    
-// Vision               vision        10              
-// Vision2              vision        1               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// RgtArm               motor         14              
-// LftArm               motor         15              
-// swivel               motor         6               
-// RgtRoller            motor         19              
-// LftRoller            motor         11              
-// RgtDrive             motor         12              
-// LftDrive             motor         18              
-// MidDrive             motor         16              
-// arm_pot              pot           A               
-// roboGyro             gyro          B               
-// rgtEnc               encoder       C, D            
-// lftEnc               encoder       E, F            
-// bckEnc               encoder       G, H            
-// Controller1          controller                    
-// Vision               vision        10              
-// Vision2              vision        1               
-// ---- END VEXCODE CONFIGURED DEVICES ----
+
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.h                                                    */
+/*    Author:       BraydenT                                                  */
+/*    Created:      1 June 2019                                               */
+/*    Description:  Main file for V5 projects                                 */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
 
 #include "vex.h"
 
@@ -47,12 +16,6 @@ using namespace std;
 int autoOptions;
 
 bool colrSeek;
-
-/*---------------------------------------------------------------------------*/
-/*  Author: BraydenT                                                         */
-/*  4142B 2019 Program                                                       */
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
 
 void pre_auton( void ){
   vexcodeInit(); //setup motors and sensors
@@ -151,53 +114,68 @@ void autonomous( void ) {
   Intake.reset();
 
   if(autoOptions == 0){
-    //deploy rollers
+    //deploy rollers  
+    
     setSwivel(100, 1000); //release ramp and rollers
     wait(500);
     setRoller(100,3000);
     setSwivel(100,-100);
     wait(500);
 
-    setRoller(100,4000);    //start intake
-    setDrive(80,13,0);    //go to first cube
-    wait(900);
-    setRoller(0,0);     //stop immediately 
+    Drive.isEncoderTurn = true;
 
-    setRoller(100,12000);   //start rollers
-    setDrive(90, 18.2, 0);  //go to stack and intake
-    wait(2200);
-    setRoller(0,0); //stop immediately
-    wait(20);
-
-    setRoller(100,5000);  //start rollers
-    setDrive(90, 14, 0);  //move forward to pick another
-    wait(1600);
-
-    setDrive(80, 0, 150); //turn to zone
-    wait(1100);
-
-    setDrive(90, 28.2, 0);  //move to cube infront of zone
-    wait(100);
-    setRoller(100,10000);
-    wait(1700);
-
-    setDrive(100,15,0);  //move to zone
+    Brain.Screen.printAt(20,20,"1: %f",radToDeg(Drive.sPos.Ang));
+    setDrive(40,12);
+    Brain.Screen.drawCircle(400, 180, 20, color::red);
+    Brain.Screen.printAt(20,40,"2: %f",radToDeg(Drive.sPos.Ang));
+    wait(1000);
+    waitDriveNew();
+    Brain.Screen.drawCircle(400, 180, 20, color::transparent);
     wait(500);
-    setRoller(0,0); //stop intake
-    wait(200);  
+    Brain.Screen.printAt(20,60,"3: %f",radToDeg(Drive.sPos.Ang));
 
-    setRoller(-100,300); //outake cubes lil
-    wait(700);
-  
-    setSwivel(100, 2000);  //raise tower
-    setRoller(78, 900);
-    wait(1100);
-    setSwivel(30, 3000);
-    wait(1500);
-
-    setDrive(40,-10,0);   //back up away from tower
-    setRoller(-40,700);
+    setDrive(40,0,180);
+    Brain.Screen.drawCircle(400, 180, 20, color::yellow);
+    Brain.Screen.printAt(20,80,"4: %f",radToDeg(Drive.sPos.Ang));
     wait(2000);
+    waitDriveNew();
+    Brain.Screen.drawCircle(400, 180, 20, color::transparent);
+    wait(300);
+    Brain.Screen.printAt(20,100,"5: %f",radToDeg(Drive.sPos.Ang));
+    wait(700);
+
+    Brain.Screen.printAt(20,20,"1: %f",radToDeg(Drive.sPos.Ang));
+    Brain.Screen.printAt(200,20,"rgt: %f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(200,40,"lft: %f", Drive.getRightPosInches());
+    setDrive(40,12,radToDeg(Drive.sPos.Ang));
+    Brain.Screen.drawCircle(400, 180, 20, color::green);
+    Brain.Screen.printAt(200,60,"rgtA: %f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(200,80,"lftA: %f", Drive.getRightPosInches());
+    Brain.Screen.printAt(20,40,"2: %f",radToDeg(Drive.sPos.Ang));
+    wait(1000);
+    waitDriveNew();
+    wait(500);
+    Brain.Screen.printAt(20,60,"3: %f",radToDeg(Drive.sPos.Ang));
+
+  
+
+    
+/*
+    Drive.isEncoderTurn = true;
+
+    for(int i=0; i<4; i++){
+      setDrive(90,10,Drive.sPos.Ang);
+      wait(100);
+      waitDriveNew();
+      wait(20);
+
+      setDrive(90,0,90);
+      wait(100);
+      waitDriveNew(2,6);
+      wait(20);
+    }*/
+    
+    wait(1000000);
 
     //stop subsystem threads
     DriveControl.interrupt();
@@ -661,7 +639,7 @@ void autonomous( void ) {
     wait(300);
     waitDrive(4);
     setRoller(100,600);
-    //Drive.stopDrive(brakeType::brake);s
+    //Drive.stopDrive(brakeType::brake);
     startCam(true, false);
     Drive.isEncoderTurn = false;
     
@@ -979,9 +957,13 @@ void usercontrol( void ) {
 
   Drive.reset();
 
-  while (1){  
+  while (1){ 
+    Drive.trackPos();
+
     Brain.Screen.printAt(20,20,"%f",radToDeg(Drive.sPos.Ang));
-    Brain.Screen.printAt(20,40,"%d",rgtEye.isExisting());
+    Brain.Screen.printAt(20,40,"%f",Drive.sPos.x);
+    Brain.Screen.printAt(20,60,"%f",Drive.sPos.y);
+
     
     //link joystick to drive
     rgt = Controller1.Axis2.value()*0.95;
@@ -1045,8 +1027,8 @@ void usercontrol( void ) {
       
     }
 
-    Brain.Screen.render();
-    Brain.Screen.clearScreen();
+    //Brain.Screen.render();
+    //Brain.Screen.clearScreen();
     
     wait(10); //Sleep the task for a short amount of time to prevent wasted resources. 
   }

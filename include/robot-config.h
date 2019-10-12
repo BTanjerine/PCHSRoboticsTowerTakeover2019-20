@@ -7,8 +7,10 @@
 #include "v5.h"
 #include "v5_vcs.h"
 
-using namespace vex;
+//initialize robot subsystems
+#include "pidcontrol.h"
 
+using namespace vex;
 
 extern brain Brain;
 
@@ -45,6 +47,7 @@ extern signature SIG5;
 extern signature SIG6;
 extern signature SIG7;
 extern vision Vision2;
+
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Text.
