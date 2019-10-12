@@ -1,4 +1,3 @@
-#include <cmath>
 void wait(int milliseconds) {
   // wait for time
   vex::this_thread::sleep_for(milliseconds);

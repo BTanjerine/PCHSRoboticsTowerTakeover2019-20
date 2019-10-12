@@ -1,10 +1,9 @@
-void setDrive(int power, float drivePos, float turnAngle = 0, bool isTurnTo = false, float rate = 1, bool slowdown = false){
+
+void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(), float rate = 1, bool slowdown = false){
   //- left + right
 
   //reset enc
   Drive.reset();
-
-  Drive.isTurnTo = isTurnTo;
 
   //reset PID values
   Drive.drivePID.changePID(8, 0.5, 2);
@@ -25,7 +24,7 @@ void setDrive(int power, float drivePos, float turnAngle = 0, bool isTurnTo = fa
   Drive.initPos.y = Drive.sPos.y;
 
   Drive.DesPower = power;             //set power
-  Drive.desiredAng = turnAngle;  //convert encoder to angle *1.1 *8.44
+  Drive.desiredAng = turnAngle;  //set angle to face or sweep to
   Drive.initAng = Drive.getRoboAng(); //set initial direction facing
   Drive.desiredPos = drivePos;        //set drive pos
 }
@@ -46,6 +45,11 @@ void setSwivel(int power, int pos){
   //set ramp angle
   Intake.swivelSpeed = power;
   Intake.swiveldesPos = pos;
+}
+
+void startCam(bool camState, bool colrMode){
+  Drive.camState = camState;
+  Drive.colorMode = colrMode;
 }
 
 void setRoller(int power, int pos, bool iscoast = false){

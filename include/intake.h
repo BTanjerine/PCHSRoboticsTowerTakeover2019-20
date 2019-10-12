@@ -7,8 +7,6 @@ using namespace std;
 class intake{
   public:
 
-  enum Cubecolr {GRN, ORG, PUR};
-
   int swiveldesPos;
   int swivelSpeed;
 
@@ -47,35 +45,6 @@ class intake{
 
   int getRollerPos(){
     return (RgtRoller.rotation(rotationUnits::raw) + LftRoller.rotation(rotationUnits::raw))/2;
-  }
-
-  bool trackTopCubes(vex::color colr){
-    bool output = false;
-
-    if(colr == vex::color::green){
-      Vision.takeSnapshot(SIG_1);
-
-      if(roboEye.getObjectX(0, roboEye.OG) >= 0 && roboEye.getObjectX(0, roboEye.OG) < 11 && roboEye.isExisting()){output = true;}
-      else{output = false;}
-    }
-
-    if(colr == vex::color::orange){
-      Vision.takeSnapshot(SIG_2);
-
-      if(roboEye.getObjectX(0, roboEye.OG) >= 0 && roboEye.getObjectX(0, roboEye.OG) < 11 && roboEye.isExisting()){output = true;}
-      else{output = false;}
-    }
-
-    if(colr == vex::color::purple){
-      Vision.takeSnapshot(SIG_3);
-
-      if(roboEye.getObjectX(0, roboEye.OG) >= 0 && roboEye.getObjectX(0, roboEye.OG) < 11 && roboEye.isExisting()){output = true;}
-      else{output = false;}
-    }
-
-
-    return output;
-
   }
 
   //move swivel

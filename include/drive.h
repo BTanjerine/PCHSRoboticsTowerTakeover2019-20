@@ -1,5 +1,3 @@
-#include <cmath>
-
 using namespace vex;
 using namespace std;
 
@@ -13,11 +11,12 @@ public:
   _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.7, 0.10625, 0.425);
+  PID turnPID = PID(1.55, 0.08375, 0.45);
   PID correctionPID = PID(0.7, 0.04375, 0.175);
+  PID visionPID = PID(0.35, 0.021875 ,0.0875);
 
-  float bckToMid = 9.0;
-  float sideToMid = 7.5;
+  float bckToMid = 6.5;
+  float sideToMid = 6.625;
 
   float angToEnc = 0.8064;
 
@@ -27,6 +26,7 @@ public:
 
   // change in angle
   float DeltaAngle = 0;
+  float DeltaEncAngle = 0;
 
   // for robot position tracking
   float L = 0;
@@ -53,6 +53,9 @@ public:
   bool turning;
   bool isTurnTo;
 
+  bool camState;
+  bool colorMode;
+
   // desired drive power
   int DesPower;
 
@@ -61,6 +64,8 @@ public:
     R = getRightPosInches() - lstRgt;
     B = getBckPosInches() - lstBck;
     DeltaAngle = degToRad(getRoboAng()) - lstAng; // find change in robot angle
+    
+    DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
@@ -95,6 +100,8 @@ public:
 
     sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
     sPos.x += hB * cosEA;  // cos(x) = cos(-x)
+
+    sPos.ang += DeltaEncAngle;  //angle of robot through encoder
   }
 
   // current postion of drive side (left)
@@ -130,13 +137,13 @@ public:
   // current postion of drive side (left) in icnhes
   float getLeftPosInches() {
     // convert to inches
-    return -lftEnc.rotation(rotationUnits::raw) * QEncToInches;
+    return lftEnc.rotation(rotationUnits::raw) * QEncToInches;
   }
 
   // current postion of drive side (right) in icnhes
   float getRightPosInches() {
     // convert to inches
-    return -rgtEnc.rotation(rotationUnits::raw) * QEncToInches;
+    return rgtEnc.rotation(rotationUnits::raw) * QEncToInches;
   }
 
   //find angle of robot through gyro 
@@ -197,7 +204,15 @@ public:
     if ((rgtPow < 0 && lftPow > 0) || (rgtPow > 0 && lftPow < 0)) {
       midPow = 0;
     } else {
-      midPow = (rgtPow + lftPow) / 2;
+      if(abs(rgtPow) > 0){
+        midPow = rgtPow;
+      }
+      else if(abs(lftPow) > 0){
+        midPow = lftPow;
+      }
+      else{
+        midPow = (rgtPow + lftPow)/2;
+      }
     }
 
     // set speed to motor
