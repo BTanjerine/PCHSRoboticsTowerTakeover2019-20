@@ -1,5 +1,4 @@
-
-void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(),float rate = 1, bool slowdown = false){
+void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng(),float rate = 1, bool slowdown = false){
   //- left + right
 
   //reset enc
@@ -11,7 +10,12 @@ void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(),fl
 
   //change pid values if sharp swerving
   if(rate != 1 && !slowdown){
-    Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
+    if(drivePos != 0){
+      Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
+    }
+    else if(turnAngle != (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng()){
+      Drive.turnPID.changePID(1.55*rate, 0.08375*rate, 0.45*rate);
+    }
   }
 
   //change pid values if slowing down drive
@@ -24,12 +28,7 @@ void setDrive(int power, float drivePos, float turnAngle = Drive.getRoboAng(),fl
   Drive.initPos.y = Drive.sPos.y;
 
   Drive.DesPower = power;             //set power
-  if(Drive.isEncoderTurn && (turnAngle == Drive.getRoboAng())){
-    Drive.desiredAng = radToDeg(Drive.sPos.Ang);  //set angle to face or sweep to
-  }
-  else{
-    Drive.desiredAng = turnAngle;  //set angle to face or sweep to
-  }
+  Drive.desiredAng = turnAngle;  //set angle to face or sweep to
   Drive.initAng = Drive.getRoboAng(); //set initial direction facing
   Drive.desiredPos = drivePos;        //set drive pos
 }

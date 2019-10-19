@@ -8,6 +8,8 @@
 /*----------------------------------------------------------------------------*/
 //
 #include "robot-config.h"
+#include "vision-config.h"
+#include "vision1-config.h"
 #include "utilities.h"
 
 #include "drive.h"
@@ -87,8 +89,8 @@ void driveControl(){
           MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
           MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
 
-          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,85));}
-          else{turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,120));}
+          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
+          else{turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
         }
         else{
           if(lftEye.isExisting() && !rgtEye.isExisting()){

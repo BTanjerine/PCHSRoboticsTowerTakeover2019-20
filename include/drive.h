@@ -11,12 +11,12 @@ class PCHSdrive {
   _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.55, 0.08375, 0.45);
+  PID turnPID = PID(1.55, 0.1125, 0.45);
   PID correctionPID = PID(0.8, 0.05, 0.2);
-  PID visionPID = PID(0.35, 0.021875 ,0.0875);
+  PID visionPID = PID(0.3, 0.01875 ,0.075);
 
   float bckToMid = 5.75;
-  float sideToMid = 6.44;
+  float sideToMid = 6.4;
 
   float angToEnc = 0.8064;
 
@@ -50,7 +50,6 @@ class PCHSdrive {
   float followDist;
   float followAng;
 
-  bool turning;
   bool isEncoderTurn;
 
   bool camState;
@@ -174,12 +173,38 @@ class PCHSdrive {
     bckEnc.resetRotation();
     MidDrive.resetRotation();
 
-    turning = false;
-
     desiredPos = 0; // reset desired positions
     desiredAng = 0;
     DesPower = 0;
     resetRobotPos();
+  }
+
+  // clear drive values
+  void fullReset() {
+    RgtDrive.resetRotation(); // reset drive sensors
+    LftDrive.resetRotation();
+
+    rgtEnc.resetRotation();
+    lftEnc.resetRotation();
+
+    bckEnc.resetRotation();
+    MidDrive.resetRotation();
+
+    // reset angle
+    sPos.Ang = 0;
+
+    // reset last enc values
+    lstBck = 0;
+    lstLft = 0;
+    lstRgt = 0;
+
+    // reset current pos
+    sPos.x = 0;
+    sPos.y = 0;
+
+    desiredPos = 0; // reset desired positions
+    desiredAng = 0;
+    DesPower = 0;
   }
 
   // set drive speed
