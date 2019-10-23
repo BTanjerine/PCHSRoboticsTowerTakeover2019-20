@@ -729,29 +729,35 @@ void autonomous( void ) {
     wait(300);
 
     Drive.turnPID.changePID(0.9, 0.05625, 0.225);
-    setDrive(90,-8,2);     //swerve away from the tower
-    wait(100);
+    setDrive(90,-6,2);     //swerve away from the tower
+    wait(200);
+    setRoller(0,0);
     waitDriveNew(6,7);
     Drive.turnPID.changePID(1.55, 0.08375, 0.45);
 
-    setDrive(90,12,6,0.75);
+    setDrive(90,10,4,0.75);
+    setRoller(100,10000);
     wait(100);
-    waitDriveNew(2,6);
+    waitDriveNew(3,6);
+
+    setDrive(90,0,-10);
+    wait(100);
+    waitDriveNew(4,6);
     setRoller(0,0);
 
-    setDrive(100,-30,-5,0.7);     //back up to zone
+    setDrive(100,-28,-12,0.9);     //back up to zone
     wait(100);
-    waitDriveNew(5);
+    waitDriveNew(4);
     
-    setDrive(100,0,-145);   //turn to zones
+    setDrive(100,0,-142);   //straight
+    setRoller(100,800);
     wait(950);
-    waitDriveNew(5,7);
-    setRoller(100,500);
+    waitDriveNew(3,7);
 
     startCam(true, true);
     wait(200);
 
-    setDrive(90,14);  //move to zone
+    setDrive(90,20);  //move to zone
     startCam(false, true);
     wait(300);
     setRoller(-100,180);
@@ -765,47 +771,49 @@ void autonomous( void ) {
     wait(1400);
 
     setArm(60, 300);
-    setDrive(90,-17);   //back up away from stack
-    //setSwivel(80, 4200);
+    setDrive(90,-12);   //back up away from stack
     wait(100);
     setRoller(-90,400,true);
     wait(1300);
     setSwivel(70,-10);
-
-
-
+    waitDriveNew(5);
+    
+    Brain.Screen.printAt(20,20,"%f",radToDeg(Drive.sPos.Ang));
+    printf("degrees: %f", radToDeg(Drive.sPos.Ang));
+    printf("degrees: %f", radToDeg(Drive.sPos.Ang));
+    printf("degrees: %f", radToDeg(Drive.sPos.Ang));
+    wait(700);
 
 
     /************Place cubes in towers***********/
-    setDrive(90,0,-282);   //turn to tower
+    setDrive(100,0,-272);   //turn to tower
     wait(100);
-    waitDriveNew(5);
+    waitDriveNew();
 
     setDrive(70,-13);     //back up 
     wait(100);
     waitDrive();
+    wait(700);
 
     setDrive(90,48);      //go to cube
     wait(600);
     setRoller(100,12000);   //pick up cube
     waitDriveNew(3);
 
-    setDrive(60,4);
-    setArm(90,1500);          //raise arm to first tower
-    wait(1200);
+    setDrive(80,1.5);
+    setArm(100,1450);          //raise arm to first tower
+    wait(1500);
     setRoller(-100,2900);     //spit cube out
     wait(1300);
 
     setArm(70,600);               //lower arm
     wait(1000);
 
-    setDrive(80,-14,-74.4);    //swerve to cubes
+    setDrive(100,-14,-350);    //swerve to cubes
     wait(100);
-    waitDrive(3);
+    waitDriveNew(3);
 
-    while(1);
-
-    setArm(100,260);         //lower arm
+    setArm(100,240);         //lower arm
     wait(800);
 
     setDrive(80,12);      //pick up 2 cube
@@ -838,6 +846,7 @@ void autonomous( void ) {
     setArm(100,950);         //raise arm
     setRoller(70,1100);     //intake cubes
     wait(2000);
+    while(1);
 
     setDrive(100,0,-103);    //turn to tower
     wait(100);

@@ -46,6 +46,7 @@ void waitDriveNew(int deadzone = 2, int counterDeadZone = 6){
     if((fabs(RgtDrive.velocity(percentUnits::pct)) < deadzone) && (fabs(LftDrive.velocity(percentUnits::pct)) < deadzone)){
       counter++;  //start counting how long the drive power is set to 0
     }
+    else{counter = 0;}
     if(counter > counterDeadZone){break;}
   }
 }
