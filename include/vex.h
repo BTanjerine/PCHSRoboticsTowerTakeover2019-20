@@ -154,8 +154,8 @@ void driveControl(){
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
     //set drive power
-    lft = (driveLft+0) + turn;  
-    rgt = (driveRgt-0) - turn;
+    lft = (driveLft+correction) + turn;  
+    rgt = (driveRgt-correction) - turn;
 
     Drive.move_drive(lft, rgt);
     //Brain.Screen.clearScreen();
