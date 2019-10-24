@@ -112,7 +112,7 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
-  autoOptions = 2;
+  autoOptions = 8;
 
   if(autoOptions == 0){
     //deploy rollers  
@@ -525,13 +525,14 @@ void autonomous( void ) {
 
     /*********Stack 7 cubes*********/
     Drive.isEncoderTurn = true;
-    Drive.sPos.Ang = degToRad(-274);
+    Drive.sPos.Ang = degToRad(-275);
+
 /*
     setSwivel(100, 1200);
     wait(600);
     setRoller(100,3000);
     setSwivel(100,-100);
-    setArm(80, 200);
+    setArm(80, 230);
     wait(150);
     setDrive(100,16);         //go forward to 1st cube
     wait(300);
@@ -543,7 +544,7 @@ void autonomous( void ) {
 
     setRoller(0, 0);
     wait(500);
-    setArm(60, 280);
+    setArm(60, 310);
     
     setRoller(100,8400);      //pick up last cube
     pickUp(1,850,9.4);  //stop and go forward multiple times to pick up cubes
@@ -587,7 +588,7 @@ void autonomous( void ) {
     startCam(true, true);
     wait(150);
     
-    setDrive(90,19);  //move to zone
+    setDrive(90,15);  //move to zone
     startCam(false, false);
     wait(300);
     setRoller(-100,180);
@@ -615,16 +616,14 @@ void autonomous( void ) {
 
     wait(700);
 
-
-    // **********Place cubes in towers***********
+    // **********Place cubes in towers**********
     setDrive(100,0,radToDeg(Drive.sPos.Ang)-129);   //turn to tower
     wait(100);
     waitDriveNew();
 
     setDrive(70,-16);     //back up 
     wait(100);
-    wait(1500);
-*/
+    wait(1500);*/
     wait(1000);
 
     setDrive(90,48);      //go to cube
@@ -640,15 +639,14 @@ void autonomous( void ) {
     wait(1300);
 
     setDrive(80,-3);
-    setArm(80,500);               //lower arm
+    setArm(80,700);               //lower arm
     wait(1000);
 
     setDrive(100,-17,-350);    //swerve to cubes
-    wait(100);
-    waitDriveNew(3);
-
+    wait(700);
     setArm(100,260);         //lower arm
-    wait(800);
+    waitDriveNew(3);
+    wait(500);
 
     setDrive(80,12);      //pick up 2 cube
     setRoller(100,15000);
@@ -659,14 +657,14 @@ void autonomous( void ) {
     wait(20);
     pickUp(1,880,9.5);              //pick up 2 cubes
     wait(20);
-    setArm(100, 2200);      //raise arm to tall tower
+    setArm(100, 2050);      //raise arm to tall tower
     wait(200);
 
     setRoller(0,0);
     setDrive(80,19,-304);     //swerve to tower
     wait(1400);
 
-    setDrive(80,12.8);     //move closer to tower
+    setDrive(80,9.8);     //move closer to tower
     wait(700);
     setRoller(100,400);
     wait(400);
