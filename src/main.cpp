@@ -112,7 +112,7 @@ void autonomous( void ) {
   Arm.reset();
   Intake.reset();
 
-  autoOptions = 5;
+  autoOptions = 2;
 
   if(autoOptions == 0){
     //deploy rollers  
@@ -400,7 +400,7 @@ void autonomous( void ) {
     startCam(true, false);
     wait(180);
     
-    setDrive(90,16.5);  //move to zone
+    setDrive(90,16.4);  //move to zone
     startCam(false, true);
     wait(300);
     setRoller(-100,180);
@@ -409,7 +409,7 @@ void autonomous( void ) {
     
     setSwivel(100, 2200);  //raise tower
     wait(600);
-    setSwivel(70, 4800);
+    setSwivel(70, 4700);
     setRoller(0,0,true);
     wait(1200);
 
