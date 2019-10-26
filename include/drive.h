@@ -64,6 +64,7 @@ class PCHSdrive {
     B = getBckPosInches() - lstBck;
 
     DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
+    
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
@@ -93,7 +94,7 @@ class PCHSdrive {
     if((L && R) || B){
       // use ^^ values to adjust robot position on X Y coords
       sPos.y += hRL * cosEA;
-      sPos.x += hRL * sinEA;
+      //sPos.x += hRL * sinEA;
 
       sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
       sPos.x += hB * cosEA;  // cos(x) = cos(-x)

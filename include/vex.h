@@ -49,19 +49,17 @@ void driveControl(){
 
   //make following line 
   _line followLine;
-
-  //Drive.reset();
   
   while(1){
     Drive.trackPos();
 
-    Brain.Screen.printAt(200,200,"rgt: %f", Drive.getLeftPosInches());
-    Brain.Screen.printAt(200,220,"lft: %f", Drive.getRightPosInches());
+    //Brain.Screen.printAt(200,200,"rgt: %f", Drive.getLeftPosInches());
+    //Brain.Screen.printAt(200,220,"lft: %f", Drive.getRightPosInches());
+
+    Brain.Screen.printAt(200,160,"des: %f", Drive.sPos.x);
 
     //if planning to turn robot
-    if(Drive.desiredAng != radToDeg(Drive.sPos.Ang) || Drive.camState){
-      Brain.Screen.printAt(200,160,"des: %f", Drive.desiredAng);
-      Brain.Screen.printAt(200,180,"cur: %f", radToDeg(Drive.sPos.Ang)); 
+    if(Drive.desiredAng != initAngle || Drive.camState){ 
 
       if(!Drive.camState){
         if(Drive.isEncoderTurn){
@@ -89,7 +87,7 @@ void driveControl(){
           MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
           MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
 
-          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
+          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));} //104
           else{turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
         }
         else{
@@ -115,8 +113,8 @@ void driveControl(){
 
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
-
-      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.8){
+      
+      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.5){
         //set points for the line the robot has to follow
         followLine.p1.x = Drive.sPos.x; //start
         followLine.p1.y = Drive.sPos.y;
@@ -133,13 +131,13 @@ void driveControl(){
           Drive.followAng = lineAngle(followLine); 
         }      
 
-        if(!Drive.isEncoderTurn){
+        if(Drive.isEncoderTurn){
           //calculate the correcting power
-          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + radToDeg(Drive.followAng))));
         }
         else{
           //calculate the correcting power
-          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + radToDeg(Drive.followAng))));
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
         }
       }
       else{

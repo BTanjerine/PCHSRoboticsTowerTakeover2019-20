@@ -16,6 +16,9 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
     else if(turnAngle != (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng()){
       Drive.turnPID.changePID(1.55*rate, 0.08375*rate, 0.45*rate);
     }
+    else{
+      Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
+    }
   }
 
   //change pid values if slowing down drive
@@ -29,7 +32,7 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
 
   Drive.DesPower = power;             //set power
   Drive.desiredAng = turnAngle;  //set angle to face or sweep to
-  Drive.initAng = Drive.getRoboAng(); //set initial direction facing
+  Drive.initAng = radToDeg(Drive.sPos.Ang); //set initial direction facing
   Drive.desiredPos = drivePos;        //set drive pos
 }
 

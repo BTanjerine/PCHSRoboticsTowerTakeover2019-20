@@ -7,7 +7,7 @@ using namespace std;
 class arm{
   public:
   //PID constant Values
-  PID armPID = PID(0.145, 0.0090625, 0.03625);
+  PID armPID = PID(0.14, 0.00875, 0.035);
   
   //desired arm position for auto
   int desiredPos;
@@ -17,7 +17,7 @@ class arm{
   //clear arm values
   void reset(){
     //reset desired positions
-    desiredPos = 312;     
+    desiredPos = 330;     
     DesPower = 0;
   }    
   

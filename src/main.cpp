@@ -21,7 +21,7 @@ void pre_auton( void ){
   
   if(Competition.isEnabled() != true){
     //reset 
-    Drive.fullReset();
+    Drive.fullReset(); 
     Arm.reset();
     Intake.reset();
     autoOptions = 0;
@@ -108,7 +108,7 @@ void autonomous( void ) {
   Brain.Screen.clearScreen();
 
   Drive.fullReset();
-  roboGyro.resetAngle();
+  //roboGyro.resetAngle();
   Arm.reset();
   Intake.reset();
 
@@ -525,9 +525,7 @@ void autonomous( void ) {
 
     /*********Stack 7 cubes*********/
     Drive.isEncoderTurn = true;
-    Drive.sPos.Ang = degToRad(-275);
 
-/*
     setSwivel(100, 1200);
     wait(600);
     setRoller(100,3000);
@@ -544,7 +542,7 @@ void autonomous( void ) {
 
     setRoller(0, 0);
     wait(500);
-    setArm(60, 310);
+    setArm(60, 330);
     
     setRoller(100,8400);      //pick up last cube
     pickUp(1,850,9.4);  //stop and go forward multiple times to pick up cubes
@@ -567,29 +565,29 @@ void autonomous( void ) {
     Drive.turnPID.changePID(1.55, 0.08375, 0.45);
 
     setDrive(90,12,4,0.75);
-    setRoller(100,10000);
+    setRoller(100,17000);
     wait(100);
     waitDriveNew(3,6);
 
-    setDrive(90,0,-5.5);
+    setDrive(90,0,-7);
     wait(100);
-    waitDriveNew(6,6);
-    setRoller(0,0);
+    waitDriveNew();
 
-    setDrive(100,-29);     //back up to zone
-    wait(100);
+    setDrive(100,-27);     //back up to zone
+    wait(400);
+    setRoller(0, 0);
     waitDriveNew(4);
     
-    setDrive(100,0,-142);   //straight
-    setRoller(100,800);
+    setDrive(100,0,-144);   //turn
+    setRoller(100,2200);
     wait(950);
     waitDriveNew(3,7);
 
-    startCam(true, true);
-    wait(150);
+    //startCam(true, true);
+    wait(130);
     
-    setDrive(90,15);  //move to zone
-    startCam(false, false);
+    setDrive(90,19);  //move to zone
+    //startCam(false, false);
     wait(300);
     setRoller(-100,180);
     wait(650);
@@ -599,10 +597,10 @@ void autonomous( void ) {
     wait(600);
     setSwivel(70, 4800);
     setRoller(0,0,true);
-    wait(1400);
+    wait(1600);
 
-    setArm(60, 300);
-    setDrive(90,-13);   //back up away from stack
+    setArm(60, 360);
+    setDrive(90,-14);   //back up away from stack
     wait(100);
     setRoller(-90,400,true);
     wait(1300);
@@ -613,18 +611,16 @@ void autonomous( void ) {
     printf("degrees: %f", radToDeg(Drive.sPos.Ang));
     printf("degrees: %f", radToDeg(Drive.sPos.Ang));
     printf("degrees: %f", radToDeg(Drive.sPos.Ang));
-
     wait(700);
 
     // **********Place cubes in towers**********
-    setDrive(100,0,radToDeg(Drive.sPos.Ang)-129);   //turn to tower
+    setDrive(100,0,-289);   //turn to tower
     wait(100);
-    waitDriveNew();
+    waitDriveNew(4);
 
     setDrive(70,-16);     //back up 
     wait(100);
-    wait(1500);*/
-    wait(1000);
+    wait(1500);
 
     setDrive(90,48);      //go to cube
     wait(600);
@@ -632,92 +628,132 @@ void autonomous( void ) {
     waitDriveNew(3);
 
     setDrive(80,-2);
-    setArm(100,1450);          //raise arm to first tower
+    setArm(100,1395);          //raise arm to first tower
     wait(1500);
-    setDrive(90, 3);
+    setDrive(90, 4.5);
     setRoller(-100,2900);     //spit cube out
-    wait(1300);
+    wait(1570);
 
-    setDrive(80,-3);
-    setArm(80,700);               //lower arm
-    wait(1000);
+    // setDrive(80,-3);
+    // setArm(80,700);               //lower arm
+    // wait(1000);
 
-    setDrive(100,-17,-350);    //swerve to cubes
+    setArm(100, 1420);
+    wait(300);
+    setDrive(100,-6,-294);
+    wait(100);
+    setArm(70, 1250);
+    waitDriveNew(4);
+
+    //Drive.turnPID.changePID(1.7, 0.10625, 0.425);
+    setDrive(90,0,-372);
+    wait(300);
+    setArm(80,800);               //lower arm
+    wait(400);
+    setArm(70,300);               //lower arm
+    waitDriveNew(4);
+    //Drive.turnPID.changePID(1.55, 0.1125, 0.45);
+
+    // setDrive(100,0,-365);
+    // wait(100);
+    // waitDriveNew(4);
+
+    setDrive(80,-27.5);
+    wait(100);
+    waitDriveNew(5);
+    
+    /*
+    setDrive(100,-17,-348);    //swerve to cubes
     wait(700);
     setArm(100,260);         //lower arm
     waitDriveNew(3);
-    wait(500);
+    wait(500);*/
 
-    setDrive(80,12);      //pick up 2 cube
+    setDrive(100,40);      //pick up 2 cube
     setRoller(100,15000);
+    wait(100);
+    waitDriveNew(4,5);
+    wait(200);
+    wait(200);
+    setRoller(0, 0);
+
+    /*setRoller(0,0);
+    setDrive(80,15.5,-311);     //swerve to tower
+    wait(1400);
+    setArm(100, 2050);      //raise arm to tall tower
+    wait(1400);
+
+    setDrive(80,3.6);     //move closer to tower
+    wait(800);
+    setRoller(100,400);
+    wait(400);
+    setRoller(-80,1400);    //spit out cube into tower
+    wait(1800);
+    setRoller(100,800);     //intake cube
+    wait(700);
+
+    setDrive(60,-30.6);   //back up
+    wait(700);
+    setArm(100,280);          //lower arm
+    wait(500);
+    setRoller(70,1100);     //intake cubes
+    wait(700);
+    setArm(100,950);         //raise arm a lil bit
+    wait(1900);*/
+
+    setDrive(100,0,-407);    //turn to tower
+    setRoller(100,700);
     wait(100);
     waitDriveNew();
 
-    pickUp(1,880,9.5);              //pick up 2 cubes
-    wait(20);
-    pickUp(1,880,9.5);              //pick up 2 cubes
-    wait(20);
-    setArm(100, 2050);      //raise arm to tall tower
-    wait(200);
-
-    setRoller(0,0);
-    setDrive(80,19,-304);     //swerve to tower
-    wait(1400);
-
-    setDrive(80,9.8);     //move closer to tower
-    wait(700);
-    setRoller(100,400);
-    wait(400);
-    setRoller(-100,1300);    //spit out cube into tower
-    wait(1600);
-    setRoller(100,800);     //intake cube
-    wait(500);
-
-    setDrive(60,-28.6);   //back up
-    wait(500);
-    setArm(100,280);          //lower arm
-    wait(500);
-    setArm(100,950);         //raise arm
-    setRoller(70,1100);     //intake cubes
-    wait(2000);
-    while(1);
-
-    setDrive(100,0,-103);    //turn to tower
-    wait(100);
-    waitDrive();
-
-    setArm(100,1240);       //raise arm 
-    wait(1000);
-    setDrive(60,11.8);    //forward to tower
-    wait(700);
-    setRoller(-100,2000);   //spit cube into tower
+    setArm(100,1210);       //raise arm 
     wait(1500);
+    setDrive(60,16,radToDeg(Drive.sPos.Ang),1,true);    //forward to tower
+    wait(1100);
+    setRoller(-100,1600);   //spit cube into tower
+    wait(1000);
     setRoller(70,900);
     wait(600);
 
-    setDrive(80,-6,-82);
+    setDrive(80,-13);
     wait(700);
-    setArm(100, 270);
-    wait(500);
+    setArm(100, 300);
+    waitDriveNew(4);
 
-    setRoller(100, 9000);
-    setDrive(90,9);
+    setDrive(90,0,-382);
     wait(300);
-    waitDrive();
+    waitDriveNew(4);
     wait(200);
 
     setRoller(0, 0);
-    setDrive(90, -9);
-    wait(100);
+    setDrive(90, -50);
+    wait(200);
     waitDrive();
 
-    setDrive(90, 0, 2);
-    wait(100);
+    setDrive(90, 38);
+    wait(200);
     waitDriveNew();
 
-    setDrive(90,-28);
+    setDrive(90,0,-482);
     wait(100);
+    waitDriveNew(4);
+
+    setArm(100,1220);       //raise arm 
+    wait(1000);
+    setDrive(80,29,radToDeg(Drive.sPos.Ang),1,true);    //forward to tower
+    wait(100);
+    waitDriveNew(5);
+
+    setRoller(-100,1300);   //spit cube into tower
+    wait(1500);
+    //setRoller(70,900);
+    wait(600);
+
+    setDrive(100, -20);
+    wait(100);
+    setArm(70, 330);
     waitDrive();
+
 
     //stop subsystem threads
     DriveControl.interrupt();
