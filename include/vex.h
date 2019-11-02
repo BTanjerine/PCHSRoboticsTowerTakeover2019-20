@@ -7,63 +7,30 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 //
-#include <cmath>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-#include "v5.h"
-#include "v5_vcs.h"
-#include "utilities.h"
+#include "robot-config.h"
 #include "vision-config.h"
-#include "vision2-config.h"
+#include "vision1-config.h"
+#include "utilities.h"
+
+#include "drive.h"
+#include "arm.h"
+#include "camera.h"
+#include "intake.h"
+#include "screen.h"
 
 vex::competition Competition = vex::competition();
-
-vex::brain             Brain;
-
-vex::motor             RgtArm(vex::PORT14, vex::gearSetting::ratio36_1, false);
-vex::motor             LftArm(vex::PORT15, vex::gearSetting::ratio36_1, true);
-vex::motor             swivel(vex::PORT17, vex::gearSetting::ratio36_1, false);
-vex::motor             RgtRoller(vex::PORT19, vex::gearSetting::ratio18_1, false);
-vex::motor             LftRoller(vex::PORT11, vex::gearSetting::ratio18_1, true);
-vex::motor             RgtDrive(vex::PORT12, vex::gearSetting::ratio18_1, true);
-vex::motor             LftDrive(vex::PORT18, vex::gearSetting::ratio18_1, false);
-vex::motor             MidDrive(vex::PORT16, vex::gearSetting::ratio18_1, false);
-
-vex::encoder           rgtEnc(Brain.ThreeWirePort.C);
-vex::encoder           lftEnc(Brain.ThreeWirePort.E);
-vex::encoder           bckEnc(Brain.ThreeWirePort.G);
-vex::gyro              roboGyro(Brain.ThreeWirePort.B);
-
-vex::pot               arm_pot(Brain.ThreeWirePort.A);
-
-vex::controller        Joystick(vex::controllerType::primary);
 
 vex::thread DriveControl;
 vex::thread ArmControl;
 vex::thread SwivelControl;
 vex::thread IntakeControl;
 
-using namespace vex;
-using namespace std;
-
-//initialize robot subsystems
-#include "pidcontrol.h"
-
-#include "drive.h"
-drive Drive;
-#include "arm.h"
-arm Arm;
-#include "camera.h"
 EYE rgtEye(EYE::V2);
 EYE lftEye(EYE::V1);
-
-#include "intake.h"
+arm Arm;
 intake Intake;
+PCHSdrive Drive;
 
-#include "screen.h"
 #include "Commands.h"
 
 void driveControl(){
@@ -88,11 +55,23 @@ void driveControl(){
   while(1){
     Drive.trackPos();
 
+    Brain.Screen.printAt(200,200,"rgt: %f", Drive.getLeftPosInches());
+    Brain.Screen.printAt(200,220,"lft: %f", Drive.getRightPosInches());
+
     //if planning to turn robot
-    if(Drive.desiredAng != Drive.getRoboAng() || Drive.camState){
+    if(Drive.desiredAng != radToDeg(Drive.sPos.Ang) || Drive.camState){
+      Brain.Screen.printAt(200,160,"des: %f", Drive.desiredAng);
+      Brain.Screen.printAt(200,180,"cur: %f", radToDeg(Drive.sPos.Ang)); 
+
       if(!Drive.camState){
-        //PID to turn robot to correct angle
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+        if(Drive.isEncoderTurn){
+          //PID to turn robot to correct angle with encoders
+          turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
+        }
+        else{
+          //PID to turn robot to correct angle
+          turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+        }
       }
       else{
         if(Drive.colorMode){
@@ -110,13 +89,21 @@ void driveControl(){
           MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
           MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
 
-          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,89));}
-          else{turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(MainObjX,95));}
+          if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
+          else{turn = Drive.visionPID.getOutputPower(60, Drive.visionPID.getError(MainObjX,104));}
         }
         else{
-          MainObjX = 90;
-          MainObjY = 0;
-          turn = 0;
+          if(lftEye.isExisting() && !rgtEye.isExisting()){
+            turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(lftEye.getObjectX(0, EYE::OG),90));
+          }
+          else if(!lftEye.isExisting() && rgtEye.isExisting()){
+            turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(rgtEye.getObjectX(0, EYE::OG),400));
+          }
+          else{
+            MainObjX = 0;
+            MainObjY = 0;
+            turn = 0; 
+          }
         }
       }
     }
@@ -125,31 +112,39 @@ void driveControl(){
     //if planning to move robot 
     if(Drive.desiredPos != 0){
       //PID to move robot to position
-      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
-      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, Drive.desiredPos));
-      
+
+      driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+      driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
+
       if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.8){
         //set points for the line the robot has to follow
-        followLine.p1.x = Drive.initPos.x; //start
-        followLine.p1.y = Drive.initPos.y;
+        followLine.p1.x = Drive.sPos.x; //start
+        followLine.p1.y = Drive.sPos.y;
 
         followLine.p2.x = Drive.desiredPos * sinf(Drive.desiredAng);  //end
         followLine.p2.y = Drive.desiredPos * cosf(Drive.desiredAng);
 
         //find angle of line
         if(abs(Drive.followAng-Drive.sPos.Ang)>M_PI/2 && abs(Drive.followAng-Drive.sPos.Ang)<(3*M_PI)/2 && Drive.followAng != 0){
-          Drive.followAng = fmod((Drive.followAng+180), 360.0);
+          //change follow angle if the angle is greater than 180 or PI
+          Drive.followAng = fmod((Drive.followAng+M_PI), 2*M_PI);
         }
         else{
           Drive.followAng = lineAngle(followLine); 
         }      
 
-        //calculate the correcting power
-        correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
+        if(!Drive.isEncoderTurn){
+          //calculate the correcting power
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
+        }
+        else{
+          //calculate the correcting power
+          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + radToDeg(Drive.followAng))));
+        }
       }
       else{
         if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5) ){
-          correction = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
+          correction = 0;//Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
         }
         else{
           correction = 0;
@@ -163,7 +158,7 @@ void driveControl(){
     rgt = (driveRgt-correction) - turn;
 
     Drive.move_drive(lft, rgt);
-
+    //Brain.Screen.clearScreen();
     wait(10); //prevent cpu hog
   }
 }
@@ -245,6 +240,7 @@ void trackZone(bool colorMode, float desDist){
       else{correction = Drive.correctionPID.getOutputPower(50, Drive.correctionPID.getError(MainObjX,110));}
     }
     else{
+      
       MainObjX = 100;
       MainObjY = 0;
       correction = 0;
@@ -261,6 +257,3 @@ void trackZone(bool colorMode, float desDist){
 
   DriveControl = thread(driveControl);
 }
-
-
-

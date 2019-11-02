@@ -5,27 +5,27 @@ using namespace std;
 Drive Subsystem
 ***********************/
 
-class drive {
-public:
+class PCHSdrive {
+  public:
   _pos sPos;
   _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.55, 0.08375, 0.45);
-  PID correctionPID = PID(0.7, 0.04375, 0.175);
-  PID visionPID = PID(0.35, 0.021875 ,0.0875);
+  PID turnPID = PID(1.55, 0.1125, 0.45);
+  PID correctionPID = PID(0.8, 0.05, 0.2);
+  PID visionPID = PID(0.3, 0.01875 ,0.075);
 
-  float bckToMid = 6.5;
-  float sideToMid = 6.625;
+  float bckToMid = 5.75;
+  float sideToMid = 6.4;
 
   float angToEnc = 0.8064;
 
   // circumfrence of wheel / encoder ticks per rotation
   float EncToInches = (3.3125 * 3.1415926535) / 900.0;
-  float QEncToInches = (3.3125 * 3.1415926535) / 360.0;
+  float QEncToInches = (2.76 * 3.1415926535) / 360.0;
 
   // change in angle
-  float DeltaAngle = 0;
+  //float DeltaAngle = 0;
   float DeltaEncAngle = 0;
 
   // for robot position tracking
@@ -40,7 +40,7 @@ public:
   float lstLft = 0;
   float lstRgt = 0;
   float lstBck = 0;
-  float lstAng = 0;
+  //float lstAng = 0;
 
   // desired drive positions for auto
   float desiredPos;
@@ -50,8 +50,7 @@ public:
   float followDist;
   float followAng;
 
-  bool turning;
-  bool isTurnTo;
+  bool isEncoderTurn;
 
   bool camState;
   bool colorMode;
@@ -63,24 +62,21 @@ public:
     L = getLeftPosInches() - lstLft; // change in encoder
     R = getRightPosInches() - lstRgt;
     B = getBckPosInches() - lstBck;
-    DeltaAngle = degToRad(getRoboAng()) - lstAng; // find change in robot angle
-    
+
     DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
     lstBck = getBckPosInches();
-    lstAng = degToRad(getRoboAng());
 
-    if (DeltaAngle) {
-      float radiusRL = R / DeltaAngle; // find the radius of the circle the
-                                       // robot travels around using right enc
-      float radiusB = B / DeltaAngle; // same as ^^ except the back tracking enc
-
-      halfAng = (DeltaAngle / 2.0); // find half the angle traveled
+    if (DeltaEncAngle) {
+      float radiusRL = R / DeltaEncAngle; // find the radius of the circle the
+                                      // robot travels around using right enc
+      halfAng = (DeltaEncAngle / 2.0); // find half the angle traveled
       float sinHA = sin(halfAng);   // find the sin of half the angle
-
       hRL = ((radiusRL + sideToMid) * sinHA) * 2.0; // find change in Y
+      
+      float radiusB = B / DeltaEncAngle; // same as ^ except the back tracking enc
       hB = ((radiusB + bckToMid) * sinHA) * 2.0;    // find change in X
     } 
     else {
@@ -89,19 +85,20 @@ public:
       hB = B;
     }
 
-    float EndAng = (halfAng + degToRad(getRoboAng())); // find ending angle
+    float EndAng = (halfAng + sPos.Ang); // find ending angle
 
     float sinEA = sin(EndAng); // calculate sin cos of ending angle
     float cosEA = cos(EndAng);
 
-    // use ^^ values to adjust robot position on X Y coords
-    sPos.y += hRL * cosEA;
-    sPos.x += hRL * sinEA;
+    if((L && R) || B){
+      // use ^^ values to adjust robot position on X Y coords
+      sPos.y += hRL * cosEA;
+      sPos.x += hRL * sinEA;
 
-    sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
-    sPos.x += hB * cosEA;  // cos(x) = cos(-x)
-
-    sPos.ang += DeltaEncAngle;  //angle of robot through encoder
+      sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
+      sPos.x += hB * cosEA;  // cos(x) = cos(-x)
+    }
+    sPos.Ang += DeltaEncAngle;  //angle of robot through encoder
   }
 
   // current postion of drive side (left)
@@ -153,12 +150,12 @@ public:
 
   void resetRobotPos() {
     // reset angle
-    sPos.Ang = 0;
+    //sPos.Ang = 0;
 
     // reset last enc values
     lstBck = 0;
-    lstLft = 0;
-    lstRgt = 0;
+    //lstLft = 0;
+    //lstRgt = 0;
 
     // reset current pos
     sPos.x = 0;
@@ -170,18 +167,44 @@ public:
     RgtDrive.resetRotation(); // reset drive sensors
     LftDrive.resetRotation();
 
+    //rgtEnc.resetRotation();
+    //lftEnc.resetRotation();
+
+    bckEnc.resetRotation();
+    MidDrive.resetRotation();
+
+    desiredPos = 0; // reset desired positions
+    desiredAng = 0;
+    DesPower = 0;
+    resetRobotPos();
+  }
+
+  // clear drive values
+  void fullReset() {
+    RgtDrive.resetRotation(); // reset drive sensors
+    LftDrive.resetRotation();
+
     rgtEnc.resetRotation();
     lftEnc.resetRotation();
 
     bckEnc.resetRotation();
     MidDrive.resetRotation();
 
-    turning = false;
+    // reset angle
+    sPos.Ang = 0;
+
+    // reset last enc values
+    lstBck = 0;
+    lstLft = 0;
+    lstRgt = 0;
+
+    // reset current pos
+    sPos.x = 0;
+    sPos.y = 0;
 
     desiredPos = 0; // reset desired positions
     desiredAng = 0;
     DesPower = 0;
-    resetRobotPos();
   }
 
   // set drive speed
@@ -221,8 +244,8 @@ public:
     MidDrive.spin(directionType::fwd, midPow, velocityUnits::pct);
   }
 
-  void stopDrive() {
-    RgtDrive.stop(brakeType::brake);
-    LftDrive.stop(brakeType::brake);
+  void stopDrive(brakeType b) {
+    RgtDrive.stop(b);
+    LftDrive.stop(b);
   }
 };

@@ -2,7 +2,7 @@
 #include "v5.h"
 #include "v5_vcs.h"
 vex::vision::signature SIG_1 = vex::vision::signature (1, -3019, -2683, -2851, 9577, 10327, 9952, 11, 0);
-vex::vision::signature SIG_2 = vex::vision::signature (2, 4117, 4969, 4544, -479, -117, -298, 5.3, 0);
+vex::vision::signature SIG_2 = vex::vision::signature (2, 5163, 8493, 6828, -475, 85, -194, 2.9, 0);
 vex::vision::signature SIG_3 = vex::vision::signature (3, 0, 0, 0, 0, 0, 0, 3, 0);
 vex::vision::signature SIG_4 = vex::vision::signature (4, 0, 0, 0, 0, 0, 0, 3, 0);
 vex::vision::signature SIG_5 = vex::vision::signature (5, 0, 0, 0, 0, 0, 0, 3, 0);
