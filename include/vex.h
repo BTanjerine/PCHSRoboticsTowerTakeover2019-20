@@ -53,14 +53,8 @@ void driveControl(){
   while(1){
     Drive.trackPos();
 
-    //Brain.Screen.printAt(200,200,"rgt: %f", Drive.getLeftPosInches());
-    //Brain.Screen.printAt(200,220,"lft: %f", Drive.getRightPosInches());
-
-    Brain.Screen.printAt(200,160,"des: %f", Drive.sPos.x);
-
     //if planning to turn robot
     if(Drive.desiredAng != initAngle || Drive.camState){ 
-
       if(!Drive.camState){
         if(Drive.isEncoderTurn){
           //PID to turn robot to correct angle with encoders
@@ -80,7 +74,6 @@ void driveControl(){
           Vision.takeSnapshot(SIG_2);
           Vision2.takeSnapshot(SIG2);
         }
-
         //check if goal is in front
         if(lftEye.isExisting() && rgtEye.isExisting()){
           //find goal by find avg position of object from 2 cameras
@@ -110,44 +103,10 @@ void driveControl(){
     //if planning to move robot 
     if(Drive.desiredPos != 0){
       //PID to move robot to position
-
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       
-      if(turn == 0 && (abs(driveLft) > 4 && abs(driveRgt) > 4) && abs(Drive.sPos.x) > 0.5){
-        //set points for the line the robot has to follow
-        followLine.p1.x = Drive.sPos.x; //start
-        followLine.p1.y = Drive.sPos.y;
-
-        followLine.p2.x = Drive.desiredPos * sinf(Drive.desiredAng);  //end
-        followLine.p2.y = Drive.desiredPos * cosf(Drive.desiredAng);
-
-        //find angle of line
-        if(abs(Drive.followAng-Drive.sPos.Ang)>M_PI/2 && abs(Drive.followAng-Drive.sPos.Ang)<(3*M_PI)/2 && Drive.followAng != 0){
-          //change follow angle if the angle is greater than 180 or PI
-          Drive.followAng = fmod((Drive.followAng+M_PI), 2*M_PI);
-        }
-        else{
-          Drive.followAng = lineAngle(followLine); 
-        }      
-
-        if(Drive.isEncoderTurn){
-          //calculate the correcting power
-          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(radToDeg(Drive.sPos.Ang), (radToDeg(Drive.sPos.Ang) + radToDeg(Drive.followAng))));
-        }
-        else{
-          //calculate the correcting power
-          correction = Drive.correctionPID.getOutputPower(10, Drive.correctionPID.getError(Drive.getRoboAng(), (Drive.getRoboAng() + radToDeg(Drive.followAng))));
-        }
-      }
-      else{
-        if(turn == 0 && (abs(driveLft) > 5 && abs(driveRgt) > 5) ){
-          correction = 0;//Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.initAng)));
-        }
-        else{
-          correction = 0;
-        }
-      }
+      correction = Drive.correctionPID.getOutputPower(10, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), Drive.initAng));
     }
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
@@ -163,6 +122,7 @@ void driveControl(){
 
 void ArmPosControl(){
   while(1){
+    Brain.Screen.printAt(30,30,"%d",Arm.getArmPos());
     int ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
     
     Arm.move_arm(ArmPow);
