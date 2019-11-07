@@ -108,7 +108,7 @@ void autonomous( void ) {
 
   Brain.Screen.clearScreen();
 
-  autoOptions = 7;
+  autoOptions = 3;
   Drive.straighten = true;
 
   Drive.fullReset();
@@ -122,25 +122,57 @@ void autonomous( void ) {
     Drive.isEncoderTurn = true;
 
     //deploy rollers
-    setSwivel(100, 1200);
+    setSwivel(100, 1200); //deploy
     wait(600);
     setRoller(100,3000);
     setSwivel(100,-100);
     wait(150);
 
-    setArm(100,600);
-    setDrive(100, 12);
+    setRoller(100,4000);  //move forward and pick up cubes
+    setDrive(80,13,0);
     wait(100);
-    waitDrive(8);
-    wait(100);
+    waitDriveNew(13);
+    setRoller(0,0);
 
-    setRoller(-100, 100000);
-    wait(800);
-    setRoller(0, 0);
-    setDrive(100,-12);
+    setRoller(100,12000);
+    setDrive(90, 18.2, 0);  //knock stack down
     wait(100);
-    waitDrive(2);
-    wait(10000000);
+    waitDriveNew(9);
+    setRoller(0,0);
+    wait(20);
+
+    setRoller(100,5000);
+    setDrive(90, 14, 0);  //move to pick more cubes
+    wait(100);
+    waitDriveNew(9);
+
+    setDrive(80, 0, 156); //turn to zoes
+    wait(100);
+    waitDriveNew(10,7);
+
+    setDrive(90, 28.2, 0);
+    wait(100);
+    setRoller(100,10000);
+    waitDriveNew(9);
+
+    setDrive(100,15,0);  //move to zone
+    wait(500);
+    setRoller(0,0);
+    waitDriveNew(12);  
+  
+    setSwivel(100, 2200);  //raise tower
+    wait(600);
+    setSwivel(70, 4800);
+    setRoller(0,0,true);
+    wait(1600);
+
+    setArm(60, 360);
+    setDrive(90,-14);   //back up away from stack
+    wait(100);
+    setRoller(-90,400,true);
+    wait(1300);
+    setSwivel(70,-10);
+    waitDriveNew(5);
 
     //stop subsystem threads
     DriveControl.interrupt();
@@ -285,30 +317,32 @@ void autonomous( void ) {
     setRoller(100,3000);
     setSwivel(100,-100);
     wait(150);
+    //setArm(70, 270);
     setDrive(100,16);         //go forward to 1st cube
     wait(300);
     setRoller(100,23000);   //move to first cube
 
-    setDrive(100, 38); //slowly pickup 3 cubes
+    setDrive(100, 39.5); //pickup 3 cubes
     waitDriveNew(10,7);
 
-    setDrive(100,0,24); //turn left
+    setDrive(100,0,25); //turn left
     wait(20);
     waitDriveNew(10,7);
 
-    setDrive(100, -32.7);  //back up robot
+    setDrive(100, -33.5);  //back up robot
+    //setArm(70,320);
     wait(500);
     setRoller(-100,200);
     wait(500);
     setRoller(100, 1000);
     waitDriveNew(14,5);
 
-    setDrive(100, -31, 0, -0.7); //swerve to 4 cubes
+    setDrive(100, -31, 0, 0.7); //swerve to 4 cubes
     wait(100);
     waitDriveNew(11,4);
 
     setRoller(100, 200000);     //start rollers
-    setDrive(90, 50);   //pickup 4 cubes
+    setDrive(90, 48.5);   //pickup 4 cubes
     wait(800);
     //setRoller(100,20000);   //start rollers
     wait(1200);
@@ -324,10 +358,10 @@ void autonomous( void ) {
     waitDrive(10);
 
     Drive.turnPID.changePID(0.9, 0.05625, 0.225);
-    setDrive(95,0,150.5);  //turn to zones
+    setDrive(95,0,-150.5);  //turn to zones
     setRoller(50, 500);
     wait(1100);
-    setSwivel(100, 1200);
+    setSwivel(100, 1600);
     waitDriveNew(9,7);
     Drive.turnPID.changePID(1.55, 0.1125, 0.45);
     
@@ -337,7 +371,7 @@ void autonomous( void ) {
     //startCam(true, true);
     //wait(170);
     
-    setDrive(90,13.6);  //move to zone
+    setDrive(90,13.1);  //move to zone
     //startCam(false, false);
     //wait(300);
     setRoller(-100,100);
@@ -622,94 +656,92 @@ void autonomous( void ) {
 
     /*********Stack 7 cubes*********/
     Drive.isEncoderTurn = true;
+Drive.isEncoderTurn = true;
 
-    setSwivel(100, 1200);
+    //deploy rollers
+    setSwivel(100, 1900);
     wait(600);
     setRoller(100,3000);
     setSwivel(100,-100);
-    setArm(80, 270);
     wait(150);
+    //setArm(70, 270);
     setDrive(100,16);         //go forward to 1st cube
     wait(300);
     setRoller(100,23000);   //move to first cube
 
-    setDrive(80, 28.5);
-    wait(100);
-    waitDriveNew(5,5);
+    setDrive(100, 39.5); //pickup 3 cubes
+    waitDriveNew(10,7);
 
+    setDrive(100,0,25); //turn left
+    wait(20);
+    waitDriveNew(10,7);
+
+    setDrive(100, -33.5);  //back up robot
+    //setArm(70,320);
+    wait(500);
+    setRoller(-100,200);
+    wait(500);
+    setRoller(100, 1000);
+    waitDriveNew(14,5);
+
+    setDrive(100, -31, 0, 0.7); //swerve to 4 cubes
+    wait(100);
+    waitDriveNew(11,4);
+
+    setRoller(100, 200000);     //start rollers
+    setDrive(90, 48.5);   //pickup 4 cubes
+    wait(800);
+    //setRoller(100,20000);   //start rollers
+    wait(1200);
     setRoller(0, 0);
-    wait(500);
-    setArm(60, 330);
-    
-    setRoller(100,8400);      //pick up last cube
-    pickUp(1,850,9.4);  //stop and go forward multiple times to pick up cubes
-    wait(500);
-
-    setDrive(80,0,22);
-    wait(100);
-    waitDriveNew(3,6);
-    setDrive(60,10); 
-    wait(200);
-    setRoller(100, 24000);
-    waitDriveNew(5);
     wait(300);
+    waitDrive(17);
+
+    setDrive(100,-25.4,radToDeg(Drive.sPos.Ang));     //back up 
+    setRoller(70, 1000);
+    setArm(90, 270);
+    wait(500);
+    setRoller(0, 0);
+    waitDrive(10);
 
     Drive.turnPID.changePID(0.9, 0.05625, 0.225);
-    setDrive(90,-9,-9);     //swerve away from the tower
-    wait(200);
-    setRoller(0,0);
-    waitDriveNew(6,7);
-    Drive.turnPID.changePID(1.55, 0.08375, 0.45);
-
-    setDrive(90,13,-2,0.75);
-    setRoller(100,17000);
-    wait(100);
-    waitDriveNew(3,6);
-
-    // setDrive(90,0,-7);
-    // wait(100);
-    // waitDriveNew();
-
-    setDrive(100,-27);     //back up to zone
-    wait(400);
-    setRoller(0, 0);
-    waitDriveNew(4);
+    setDrive(95,0,-150.5);  //turn to zones
+    setRoller(50, 500);
+    wait(1100);
+    setSwivel(100, 1600);
+    waitDriveNew(9,7);
+    Drive.turnPID.changePID(1.55, 0.1125, 0.45);
     
-    setDrive(100,0,-141);   //turn
-    setRoller(100,2200);
-    wait(950);
-    waitDriveNew(2,7);
-
-    //startCam(true, true);
-    //wait(130);
-
     Drive.straighten = false;
-    setDrive(90,16);  //move to zone
-    //startCam(false, false);
-    wait(300);
-    setRoller(-100,180);
-    wait(650);
-    waitDriveNew(10);
-    Drive.straighten = true;
+    wait(100);
     
+    //startCam(true, true);
+    //wait(170);
+    
+    setDrive(90,13.1);  //move to zone
+    //startCam(false, false);
+    //wait(300);
+    setRoller(-100,100);
+    wait(100);
+    wait(550);
+    waitDriveNew(9,3);
+    
+    //setRoller(-60,100);
     setSwivel(100, 2200);  //raise tower
     wait(600);
-    setSwivel(70, 4800);
+    setSwivel(65, 5100);
     setRoller(0,0,true);
-    wait(1600);
+    wait(400);
+    wait(900);
 
-    setArm(60, 360);
-    setDrive(90,-14);   //back up away from stack
-    wait(100);
-    setRoller(-90,400,true);
+    setArm(60, 280);
+    setDrive(90,-12);   //back up away from stack
+    //setSwivel(80, 4200);
+    setRoller(-80,4000,true);
     wait(1300);
     setSwivel(70,-10);
-    waitDriveNew(5);
-    
-    Brain.Screen.printAt(20,20,"%f",radToDeg(Drive.sPos.Ang));
-    wait(700);
-
-
+    wait(100);
+    waitDriveNew(9,5);
 
     // **********Place cubes in towers**********
     setDrive(100,0,-284);   //turn to tower
