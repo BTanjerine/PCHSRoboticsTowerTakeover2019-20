@@ -105,8 +105,11 @@ void driveControl(){
       //PID to move robot to position
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getMidPosInches(), Drive.desiredPos));
-      
-      correction = Drive.correctionPID.getOutputPower(10, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), Drive.initAng));
+      if(Drive.straighten){
+        correction = Drive.correctionPID.getOutputPower(10, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), Drive.initAng));
+      }
+      else{correction = 0;}
+
     }
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
@@ -115,14 +118,13 @@ void driveControl(){
     rgt = (driveRgt-correction) - turn;
 
     Drive.move_drive(lft, rgt);
-    //Brain.Screen.clearScreen();
+    
     wait(10); //prevent cpu hog
   }
 }
 
 void ArmPosControl(){
   while(1){
-    Brain.Screen.printAt(30,30,"%d",Arm.getArmPos());
     int ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
     
     Arm.move_arm(ArmPow);
@@ -165,53 +167,4 @@ void intakeControl(){
     }
     wait(10);
   }
-}
-
-void trackZone(bool colorMode, float desDist){
-  int correction;
-  int MainObjX;
-  int MainObjY;
-
-  int pow = 90;
-
-  DriveControl.interrupt();
-
-  while(1){
-    if(colorMode){
-      Vision.takeSnapshot(SIG_1); //start tracking
-      Vision2.takeSnapshot(SIG1);
-    }
-    else{
-      Vision.takeSnapshot(SIG_2);
-      Vision2.takeSnapshot(SIG2);
-    }
-  
-    pow = Drive.drivePID.getOutputPower(90, Drive.drivePID.getError((Drive.getLeftPosInches()+Drive.getRightPosInches())/2, desDist));
-
-    //check if goal is in front
-    if(lftEye.isExisting() && rgtEye.isExisting()){
-      //find goal by find avg position of object from 2 cameras
-      MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
-      MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
-
-      if(colorMode){correction = Drive.visionPID.getOutputPower(50, Drive.visionPID.getError(MainObjX,85));}
-      else{correction = Drive.correctionPID.getOutputPower(50, Drive.correctionPID.getError(MainObjX,110));}
-    }
-    else{
-      
-      MainObjX = 100;
-      MainObjY = 0;
-      correction = 0;
-      pow = 0;
-    }
-
-    Drive.move_drive(pow+correction,pow-correction);
-  }
-
-  Drive.move_drive(0,0);
-
-  Drive.reset();
-  wait(100);
-
-  DriveControl = thread(driveControl);
 }

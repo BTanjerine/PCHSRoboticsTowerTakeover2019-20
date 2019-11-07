@@ -13,7 +13,7 @@ class PCHSdrive {
   PID drivePID = PID(8, 0.5, 2);
   PID turnPID = PID(1.55, 0.1125, 0.45);
   PID correctionPID = PID(0.8, 0.05, 0.2);
-  PID visionPID = PID(0.3, 0.01875 ,0.075);
+  PID visionPID = PID(0.2, 0.0125 ,0.05);
 
   float bckToMid = 5.75;
   float sideToMid = 6.4;
@@ -51,6 +51,7 @@ class PCHSdrive {
   float followAng;
 
   bool isEncoderTurn;
+  bool straighten;
 
   bool camState;
   bool colorMode;
@@ -206,6 +207,7 @@ class PCHSdrive {
     desiredPos = 0; // reset desired positions
     desiredAng = 0;
     DesPower = 0;
+    straighten = true;
   }
 
   // set drive speed

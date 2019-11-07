@@ -40,6 +40,7 @@ void waitDrive(int deadzone = 2){
   //wait for drive motors to slow down
   while((fabs(RgtDrive.velocity(percentUnits::pct)) > deadzone) || (fabs(LftDrive.velocity(percentUnits::pct)) > deadzone)){
     Brain.Screen.clearScreen();
+    wait(10);
   }
 }
 
@@ -51,6 +52,7 @@ void waitDriveNew(int deadzone = 2, int counterDeadZone = 6){
     }
     else{counter = 0;}
     if(counter > counterDeadZone){break;}
+    wait(10);
   }
 }
 
@@ -94,7 +96,7 @@ void pickUp(int times, int frequency = 800, float dist = 8.5, bool noStr = false
     else{
       setDrive(80, dist);
     }
-    wait(frequency);  //900 5.5secs 700 4 secs 800 
+    wait(frequency);  //900 5.5secs 700 4 secs 800
   }
 }
 
