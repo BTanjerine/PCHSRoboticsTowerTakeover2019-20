@@ -80,12 +80,6 @@ typedef struct Pos {
   float Ang;
 } _pos;
 
-// polar coord
-typedef struct Polar {
-  float Ang;
-  float radius;
-} _polar;
-
 // 2d vector
 typedef struct vector {
   float x;
@@ -97,18 +91,6 @@ typedef struct Line {
   _vector p1;
   _vector p2;
 } _line;
-
-//set polar coord to cartesian
-void polarTovectors(_polar pol, _vector vec) {
-  vec.x = pol.radius * cos(pol.Ang);
-  vec.y = pol.radius * sin(pol.Ang);
-}
-
-//set cartesian to polar coords
-void vectorTopolar(_vector vec, _polar pol) {
-  pol.Ang = atan2f(vec.y, vec.x);
-  pol.radius = sqrtf(vec.x * vec.x + vec.y * vec.y);
-}
 
 //find angle of line
 float lineAngle(_line lin) {
@@ -122,11 +104,6 @@ float lineLength(_line lin) {
   float difY = (lin.p2.y - lin.p1.y);
   float difX = (lin.p2.x - lin.p1.x);
   return sqrtf((difX * difX) + (difY * difY));
-}
-
-//find angle nearest to angle 
-float nearAngle(float angle, float reference) {
-  return ((reference - angle) / (2 * M_PI)) * (2 * M_PI) + angle;
 }
 
 float radToDeg(float rad) { return (rad * 180) / M_PI; }  //radians to degrees

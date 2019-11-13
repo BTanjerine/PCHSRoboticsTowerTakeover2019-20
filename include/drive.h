@@ -13,7 +13,7 @@ class PCHSdrive {
   PID drivePID = PID(8, 0.5, 2);
   PID turnPID = PID(1.55, 0.1125, 0.45);
   PID correctionPID = PID(0.8, 0.05, 0.2);
-  PID visionPID = PID(0.3, 0.01875 ,0.075);
+  PID visionPID = PID(0.2, 0.0125 ,0.05);
 
   float bckToMid = 5.75;
   float sideToMid = 6.4;
@@ -51,6 +51,7 @@ class PCHSdrive {
   float followAng;
 
   bool isEncoderTurn;
+  bool straighten;
 
   bool camState;
   bool colorMode;
@@ -64,6 +65,7 @@ class PCHSdrive {
     B = getBckPosInches() - lstBck;
 
     DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
+    
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
@@ -93,7 +95,7 @@ class PCHSdrive {
     if((L && R) || B){
       // use ^^ values to adjust robot position on X Y coords
       sPos.y += hRL * cosEA;
-      sPos.x += hRL * sinEA;
+      //sPos.x += hRL * sinEA;
 
       sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
       sPos.x += hB * cosEA;  // cos(x) = cos(-x)
@@ -104,7 +106,7 @@ class PCHSdrive {
   // current postion of drive side (left)
   int getLeftPosition() {
     // average of front and back
-    return LftDrive.rotation(rotationUnits::raw);
+    return LftDrive.rotation(rotationUnits::raw)*EncToInches;
   }
 
   // get current position of mid wheel
@@ -115,7 +117,7 @@ class PCHSdrive {
   // current postion of drive side (right)
   int getRightPosition() {
     // average of front and back
-    return RgtDrive.rotation(rotationUnits::raw);
+    return RgtDrive.rotation(rotationUnits::raw)*EncToInches;
   }
 
   // current psotion of drive side (back) for position tracking
@@ -205,6 +207,7 @@ class PCHSdrive {
     desiredPos = 0; // reset desired positions
     desiredAng = 0;
     DesPower = 0;
+    straighten = true;
   }
 
   // set drive speed
