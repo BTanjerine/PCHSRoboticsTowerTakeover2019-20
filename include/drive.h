@@ -106,7 +106,7 @@ class PCHSdrive {
   // current postion of drive side (left)
   int getLeftPosition() {
     // average of front and back
-    return LftDrive.rotation(rotationUnits::raw);
+    return LftDrive.rotation(rotationUnits::raw)*EncToInches;
   }
 
   // get current position of mid wheel
@@ -117,7 +117,7 @@ class PCHSdrive {
   // current postion of drive side (right)
   int getRightPosition() {
     // average of front and back
-    return RgtDrive.rotation(rotationUnits::raw);
+    return RgtDrive.rotation(rotationUnits::raw)*EncToInches;
   }
 
   // current psotion of drive side (back) for position tracking
