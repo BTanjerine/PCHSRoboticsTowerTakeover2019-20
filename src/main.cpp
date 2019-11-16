@@ -102,16 +102,17 @@ void pre_auton( void ){
 
 void autonomous( void ) {
   //start background tasks
-  DriveControl = thread(driveControl);
-  ArmControl = thread(ArmPosControl);
-  SwivelControl= thread(swivelControl);
-  IntakeControl = thread(intakeControl);
+  DriveControl = task(driveControl);
+  ArmControl = task(ArmPosControl);
+  SwivelControl= task(swivelControl);
+  IntakeControl = task(intakeControl);
 
   //clear screen
   Brain.Screen.clearScreen();
 
   //auto preset0
   Drive.straighten = true;
+  autoOptions = 7;
 
   //reset robot
   Drive.fullReset();
@@ -179,10 +180,10 @@ void autonomous( void ) {
     waitDriveNew(5);
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
   
   if(autoOptions == 1){
@@ -238,10 +239,10 @@ void autonomous( void ) {
     
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
   
   if(autoOptions == 2){ 
@@ -310,10 +311,10 @@ void autonomous( void ) {
     waitDriveNew(5);
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
 
 
@@ -414,10 +415,10 @@ void autonomous( void ) {
     wait(10000);
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
 
 
@@ -491,20 +492,51 @@ void autonomous( void ) {
 
     
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
 
   if(autoOptions == 5){
-    
+    Drive.isEncoderTurn = true;
+
+    //deploy rollers
+    setSwivel(100, 1900);
+    wait(600);
+    setRoller(100,3000);
+    setSwivel(100,-100);
+    wait(150);
+    //setArm(70, 270);
+    setDrive(100,16);         //go forward to 1st cube
+    wait(300);
+    setRoller(100,23000);
+
+    setDrive(100, 43); //pickup 3 cubes
+    waitDriveNew(8,7);
+
+    setDrive(100,0,-91); //turn right
+    wait(100);
+    waitDriveNew(6,8);
+
+    setDrive(100,-20);
+    wait(100);
+    waitDriveNew(8,9);
+    wait(1000000);
+/*
+    setDrive(100, -33.5);  //back up robot
+    //setArm(70,320);
+    wait(500);
+    setRoller(-100,200);
+    wait(500);
+    setRoller(100, 1000);
+    wait(1000000);*/
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
   
   if(autoOptions == 6){
@@ -574,10 +606,10 @@ void autonomous( void ) {
     waitDriveNew(5);
     
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
 
 
@@ -611,7 +643,7 @@ void autonomous( void ) {
     setDrive(100, 39); //slowly pickup 3 cubes
     waitDriveNew(10,7);
 
-    setDrive(100,0,-26); //turn left
+    setDrive(100,0,-25); //turn left
     wait(20);
     waitDriveNew(8,7);
 
@@ -622,12 +654,12 @@ void autonomous( void ) {
     setRoller(100, 1000);
     waitDriveNew(14,5);
 
-    setDrive(100, -31, 0, 0.7); //swerve to 4 cubes
+    setDrive(100, -38, 0, 0.7); //swerve to 4 cubes
     wait(100);
-    waitDriveNew(11,4);
+    waitDriveNew(9,7);
 
     setRoller(100, 200000);     //start rollers
-    setDrive(90, 50);   //pickup 4 cubes
+    setDrive(90, 55);   //pickup 4 cubes
     wait(800);
     setRoller(100,23000);   //start rollers
     wait(1500);
@@ -679,10 +711,10 @@ void autonomous( void ) {
     wait(10000);
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
 
 
@@ -910,16 +942,16 @@ void autonomous( void ) {
 
 
     //stop subsystem threads
-    DriveControl.interrupt();
-    ArmControl.interrupt();
-    SwivelControl.interrupt();
-    IntakeControl.interrupt();
+    DriveControl.stop();
+    ArmControl.stop();
+    SwivelControl.stop();
+    IntakeControl.stop();
   }
   //stop subsystem threads
-  DriveControl.interrupt();
-  ArmControl.interrupt();
-  SwivelControl.interrupt();
-  IntakeControl.interrupt();
+  DriveControl.stop();
+  ArmControl.stop();
+  SwivelControl.stop();
+  IntakeControl.stop();
 }
 
 void usercontrol( void ) {
@@ -931,61 +963,28 @@ void usercontrol( void ) {
   bool holdState;
   int holdPos;
 
-  int MainObjX;
-  int MainObjY;
-  int turn;
-
-
   Brain.Screen.clearScreen();
   Brain.resetTimer();
 
   //stop subsystems threads
-  DriveControl.interrupt();
-  ArmControl.interrupt();
-  IntakeControl.interrupt();
-  SwivelControl.interrupt();
+  DriveControl.stop();
+  ArmControl.stop();
+  SwivelControl.stop();
+  IntakeControl.stop();
 
   Drive.reset();
   wait(100);
 
   while (1){ 
-    //Drive.trackPos();
-
-    Vision.takeSnapshot(SIG_1);
-    Vision2.takeSnapshot(SIG1);
-
-    //check if goal is in front
-    if(lftEye.isExisting() && rgtEye.isExisting()){
-      //find goal by find avg position of object from 2 cameras
-      MainObjX = (lftEye.getObjectX(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
-      MainObjY = (lftEye.getObjectY(0,EYE::OG) + rgtEye.getObjectX(0, EYE::OG))/2;
-
-      if(Drive.colorMode){turn = Drive.visionPID.getOutputPower(70, Drive.visionPID.getError(MainObjX,93));}
-      else{turn = Drive.visionPID.getOutputPower(70, Drive.visionPID.getError(MainObjX,93));}
-    }
-    else{
-      if(lftEye.isExisting() && !rgtEye.isExisting()){
-        turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(lftEye.getObjectX(0, EYE::OG),90));
-      }
-      else if(!lftEye.isExisting() && rgtEye.isExisting()){
-        turn = Drive.visionPID.getOutputPower(80, Drive.visionPID.getError(rgtEye.getObjectX(0, EYE::OG),400));
-      }
-      else{
-        MainObjX = 0;
-        MainObjY = 0;
-        turn = 0; 
-      }
-    }
-
-    Brain.Screen.printAt(20,20,"%d",Arm.getArmPos());
-    Brain.Screen.printAt(20,40,"%d",Arm.armPID.getOutputPower(10, Arm.armPID.getError(Arm.getArmPos(),pastPos)));
+    Drive.trackPos();
+    //Brain.Screen.printAt(20,40,"%d",Arm.armPID.getOutputPower(10, Arm.armPID.getError(Arm.getArmPos(),pastPos)));
 
     //link joystick to drive
     rgt = Controller1.Axis2.value()*0.95;
     lft = Controller1.Axis3.value()*0.95;
 
     if(Controller1.ButtonX.pressing()){
-      Drive.move_drive(50+turn, 50-turn);
+      Drive.move_drive(50, 50);
     }
     else{
       Drive.move_drive(lft, rgt);
@@ -1005,6 +1004,12 @@ void usercontrol( void ) {
       Arm.Stop(brakeType::hold);
       //Arm.move_arm(Arm.armPID.getOutputPower(10, Arm.armPID.getError(Arm.getArmPos(),pastPos)));
     }
+
+    Brain.Screen.printAt(20,20,"%f",Drive.getRightPosInches());
+    Brain.Screen.printAt(20,40,"%f",Drive.getLeftPosInches());
+    Brain.Screen.printAt(20,60,"%d", MidDrive.installed());
+    
+    
 
     //intake or spit out cubes when button is pressed
     if(Controller1.ButtonR1.pressing()){
@@ -1050,9 +1055,9 @@ void usercontrol( void ) {
     }
 
     Brain.Screen.render();
-    Brain.Screen.clearScreen();
     
-    wait(10); //Sleep the task for a short amount of time to prevent wasted resources. 
+    wait(10); //Sleep the task for a short amount of time to prevent wasted resources.
+    Brain.Screen.clearScreen();
   }
 }
 

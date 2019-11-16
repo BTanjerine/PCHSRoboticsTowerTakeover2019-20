@@ -30,7 +30,6 @@ extern pot arm_pot;
 extern gyro roboGyro;
 extern encoder rgtEnc;
 extern encoder lftEnc;
-extern encoder bckEnc;
 extern controller Controller1;
 
 /**

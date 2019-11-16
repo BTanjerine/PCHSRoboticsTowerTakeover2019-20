@@ -8,15 +8,12 @@ Drive Subsystem
 class PCHSdrive {
   public:
   _pos sPos;
-  _vector initPos;
 
   PID drivePID = PID(8, 0.5, 2);
   PID turnPID = PID(1.55, 0.1125, 0.45);
-  PID correctionPID = PID(0.8, 0.05, 0.2);
-  PID visionPID = PID(0.2, 0.0125 ,0.05);
 
   float bckToMid = 5.75;
-  float sideToMid = 6.4;
+  float sideToMid = 5.8;
 
   float angToEnc = 0.8064;
 
@@ -45,6 +42,7 @@ class PCHSdrive {
   // desired drive positions for auto
   float desiredPos;
   float desiredAng;
+  int initGyroAng;
   float initAng;
 
   float followDist;
@@ -62,44 +60,12 @@ class PCHSdrive {
   void trackPos() {
     L = getLeftPosInches() - lstLft; // change in encoder
     R = getRightPosInches() - lstRgt;
-    B = getBckPosInches() - lstBck;
 
     DeltaEncAngle = (L-R)/(sideToMid*2);  //find change in angle through encoders
-    
 
     lstLft = getLeftPosInches(); // record last pos
     lstRgt = getRightPosInches();
-    lstBck = getBckPosInches();
 
-    if (DeltaEncAngle) {
-      float radiusRL = R / DeltaEncAngle; // find the radius of the circle the
-                                      // robot travels around using right enc
-      halfAng = (DeltaEncAngle / 2.0); // find half the angle traveled
-      float sinHA = sin(halfAng);   // find the sin of half the angle
-      hRL = ((radiusRL + sideToMid) * sinHA) * 2.0; // find change in Y
-      
-      float radiusB = B / DeltaEncAngle; // same as ^ except the back tracking enc
-      hB = ((radiusB + bckToMid) * sinHA) * 2.0;    // find change in X
-    } 
-    else {
-      halfAng = 0; // reset half
-      hRL = R;
-      hB = B;
-    }
-
-    float EndAng = (halfAng + sPos.Ang); // find ending angle
-
-    float sinEA = sin(EndAng); // calculate sin cos of ending angle
-    float cosEA = cos(EndAng);
-
-    if((L && R) || B){
-      // use ^^ values to adjust robot position on X Y coords
-      sPos.y += hRL * cosEA;
-      //sPos.x += hRL * sinEA;
-
-      sPos.y += hB * -sinEA; //-sin(x) = sin(-x)
-      sPos.x += hB * cosEA;  // cos(x) = cos(-x)
-    }
     sPos.Ang += DeltaEncAngle;  //angle of robot through encoder
   }
 
@@ -120,14 +86,6 @@ class PCHSdrive {
     return RgtDrive.rotation(rotationUnits::raw)*EncToInches;
   }
 
-  // current psotion of drive side (back) for position tracking
-  int getBckPosition() { return bckEnc.rotation(rotationUnits::raw); }
-
-  // current psotion of drive side (back) in inches for position tracking
-  float getBckPosInches() {
-    return bckEnc.rotation(rotationUnits::raw) * QEncToInches;
-  }
-
   // get current position of mid wheel in inches
   float getMidPosInches() {
     return MidDrive.rotation(rotationUnits::raw) * EncToInches;
@@ -143,6 +101,18 @@ class PCHSdrive {
   float getRightPosInches() {
     // convert to inches
     return rgtEnc.rotation(rotationUnits::raw) * QEncToInches;
+  }
+
+  float getRobotDistTraveled(bool isBad){
+    int pos;
+    if(isBad || !MidDrive.installed()){
+      pos = (getRightPosition() + getLeftPosition())/2;
+    }
+    else{
+      pos = getMidPosInches();
+    }
+
+    return pos;
   }
 
   //find angle of robot through gyro 
@@ -172,7 +142,6 @@ class PCHSdrive {
     //rgtEnc.resetRotation();
     //lftEnc.resetRotation();
 
-    bckEnc.resetRotation();
     MidDrive.resetRotation();
 
     desiredPos = 0; // reset desired positions
@@ -189,7 +158,6 @@ class PCHSdrive {
     rgtEnc.resetRotation();
     lftEnc.resetRotation();
 
-    bckEnc.resetRotation();
     MidDrive.resetRotation();
 
     // reset angle
