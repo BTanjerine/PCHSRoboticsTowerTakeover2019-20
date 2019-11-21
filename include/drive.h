@@ -10,7 +10,7 @@ class PCHSdrive {
   _pos sPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.55, 0.1125, 0.45);
+  PID turnPID = PID(1.45, 0.090625, 0.3625);
 
   float bckToMid = 5.75;
   float sideToMid = 5.8;
@@ -113,6 +113,10 @@ class PCHSdrive {
     }
 
     return pos;
+  }
+
+  bool checkInstalled(){
+    return (!MidDrive.installed() || !RgtDrive.installed() || !LftDrive.installed());
   }
 
   //find angle of robot through gyro 

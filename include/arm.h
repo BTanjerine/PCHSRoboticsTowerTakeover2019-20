@@ -17,7 +17,7 @@ class arm{
   //clear arm values
   void reset(){
     //reset desired positions
-    desiredPos = 330;     
+    desiredPos = 270;     
     DesPower = 0;
   }    
   
@@ -29,6 +29,10 @@ class arm{
   void move_arm(int power){
     RgtArm.spin(directionType::fwd,power,velocityUnits::pct);
     LftArm.spin(directionType::fwd,power,velocityUnits::pct);
+  }
+
+  bool checkInstalled(){
+    return !RgtArm.installed() || !LftArm.installed();
   }
 
   void Stop(brakeType brake){

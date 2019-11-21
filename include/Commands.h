@@ -14,7 +14,7 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
       Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
     }
     else if(turnAngle != (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng()){
-      Drive.turnPID.changePID(1.55*rate, 0.08375*rate, 0.45*rate);
+      Drive.turnPID.changePID(1.45*rate, 0.090625*rate, 0.3625*rate);
     }
     else{
       Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);

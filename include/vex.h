@@ -50,6 +50,10 @@ int driveControl(){
         //PID to turn robot to correct angle
         turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
       }
+
+      if(Drive.desiredPos == 0){
+        driveLft = driveRgt = 0;
+      }
     }
     else {turn=0;} //dont turn robot 
 
@@ -58,8 +62,9 @@ int driveControl(){
       //PID to move robot to position
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getRobotDistTraveled(false), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getRobotDistTraveled(false), Drive.desiredPos));
+      
       if(Drive.straighten){
-        correction = Drive.turnPID.getOutputPower(10, Drive.turnPID.getError(Drive.getRoboAng(), Drive.initGyroAng));
+        correction = Drive.turnPID.getOutputPower(15, Drive.turnPID.getError(Drive.getRoboAng(), Drive.initGyroAng));
       }
       else{correction = 0;}
 
@@ -121,6 +126,20 @@ int intakeControl(){
       }
       
     }
+    wait(10);
+  }
+  return 0;
+}
+
+int opControlMacs(){
+  int count;
+  count = 0;
+  while(1){
+    if((Drive.checkInstalled() || Arm.checkInstalled() || Intake.checkInstalled()) && count < 3){
+      count = count+1;
+      Controller1.rumble(".-.-");
+    }
+
     wait(10);
   }
   return 0;
