@@ -10,7 +10,7 @@ class PCHSdrive {
   _pos sPos;
 
   PID drivePID = PID(8, 0.5, 2);
-  PID turnPID = PID(1.45, 0.090625, 0.3625);
+  PID turnPID = PID(1.2, 0.075, 0.3);
 
   float bckToMid = 5.75;
   float sideToMid = 5.8;

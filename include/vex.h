@@ -63,10 +63,10 @@ int driveControl(){
       driveLft = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getRobotDistTraveled(false), Drive.desiredPos));
       driveRgt = Drive.drivePID.getOutputPower(Drive.DesPower, Drive.drivePID.getError(Drive.getRobotDistTraveled(false), Drive.desiredPos));
       
-      if(Drive.straighten){
-        correction = Drive.turnPID.getOutputPower(15, Drive.turnPID.getError(Drive.getRoboAng(), Drive.initGyroAng));
-      }
-      else{correction = 0;}
+      // // if(Drive.straighten){
+      // //   correction = Drive.turnPID.getOutputPower(15, Drive.turnPID.getError(Drive.getRoboAng(), Drive.initGyroAng));
+      // // }
+      // else{correction = 0;}
 
     }
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
@@ -83,9 +83,17 @@ int driveControl(){
 }
 
 int ArmPosControl(){
+  int ArmPow;
   while(1){
-    int ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
-    
+    Brain.Screen.printAt(20,20,"%d",Arm.getArmPos());
+
+    if(Arm.getArmPos() < 290 && Arm.desiredPos < 400){
+      ArmPow = -6;
+    }
+    else{
+      ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
+    }
+
     Arm.move_arm(ArmPow);
     wait(10); //prevent cpu hog
   }
