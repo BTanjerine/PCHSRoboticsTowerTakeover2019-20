@@ -1,8 +1,6 @@
 #include "robot-config.h"
 
 using namespace vex;
-using signature = vision::signature;
-using code = vision::code;
 
 // A global instance of brain used for printing to the V5 Brain screen
 brain  Brain;
@@ -20,7 +18,6 @@ pot arm_pot = pot(Brain.ThreeWirePort.A);
 gyro roboGyro = gyro(Brain.ThreeWirePort.B);
 encoder rgtEnc = encoder(Brain.ThreeWirePort.C);
 encoder lftEnc = encoder(Brain.ThreeWirePort.E);
-encoder bckEnc = encoder(Brain.ThreeWirePort.G);
 controller Controller1 = controller(primary);
 // VEXcode generated functions
 

@@ -57,6 +57,10 @@ class intake{
     LftRoller.spin(directionType::fwd, power, velocityUnits::pct);
   }
 
+  bool checkInstalled(){
+    return !RgtRoller.installed() || !LftRoller.installed() || !swivel.installed();
+  }
+
   void stopRoller(brakeType brake){
     RgtRoller.stop(brake);
     LftRoller.stop(brake);

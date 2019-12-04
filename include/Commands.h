@@ -14,7 +14,7 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
       Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
     }
     else if(turnAngle != (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng()){
-      Drive.turnPID.changePID(1.55*rate, 0.08375*rate, 0.45*rate);
+      Drive.turnPID.changePID(1.45*rate, 0.090625*rate, 0.3625*rate);
     }
     else{
       Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
@@ -25,14 +25,11 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
   if(slowdown){
     Drive.drivePID.changePID(5*rate, 0.3125*rate, 1.25*rate);
   }
-  
-  //set robot start point
-  Drive.initPos.x = Drive.sPos.x;
-  Drive.initPos.y = Drive.sPos.y;
 
   Drive.DesPower = power;             //set power
   Drive.desiredAng = turnAngle;  //set angle to face or sweep to
   Drive.initAng = radToDeg(Drive.sPos.Ang); //set initial direction facing
+  Drive.initGyroAng = Drive.getRoboAng();
   Drive.desiredPos = drivePos;        //set drive pos
 }
 
