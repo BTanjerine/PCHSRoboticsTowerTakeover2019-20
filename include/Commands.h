@@ -36,20 +36,6 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
   Drive.desiredPos = drivePos;        //set drive pos
 }
 
-void waitSonar(int deadzone = 16){
-  float change;
-  float past;
-
-  //wait for drive motors to slow down
-  while(fabs(change) < 0.9 || (fabs(RgtDrive.velocity(percentUnits::pct)) < 13) && (fabs(LftDrive.velocity(percentUnits::pct)) < 13)){
-    change = bckSon.distance(distanceUnits::cm) - past;
-    Brain.Screen.printAt(20,80,"%f",change);
-
-    past = bckSon.distance(distanceUnits::cm);   
-    wait(100);
-  }
-}
-
 void waitDriveNew(int deadzone = 2, int counterDeadZone = 6){
   int counter = 0;
   while(1){

@@ -29,7 +29,7 @@ PCHSdrive Drive;
 #include "Commands.h"
 
 int driveControl(){
-  int turn;
+  int Turn;
   int correction;
   int driveLft = 0;
   int driveRgt = 0;
@@ -44,18 +44,18 @@ int driveControl(){
     if(Drive.desiredAng != Drive.initAng){ 
       if(Drive.isEncoderTurn){
         //PID to turn robot to correct angle with encoders
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
+        Turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(radToDeg(Drive.sPos.Ang), (Drive.desiredAng)));
       }
       else{
         //PID to turn robot to correct angle
-        turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
+        Turn = Drive.turnPID.getOutputPower(Drive.DesPower, Drive.turnPID.getError(Drive.getRoboAng(), (Drive.desiredAng)));
       }
 
       if(Drive.desiredPos == 0){
         driveLft = driveRgt = 0;
       }
     }
-    else {turn=0;} //dont turn robot 
+    else {Turn=0;} //dont turn robot 
 
     //if planning to move robot 
     if(Drive.desiredPos != 0){
@@ -72,8 +72,8 @@ int driveControl(){
     else{driveLft = 0; driveRgt = 0;correction = 0;} //dont move robot
 
     //set drive power
-    lft = (driveLft+correction) + turn;  
-    rgt = (driveRgt-correction) - turn;
+    lft = (driveLft+correction) + Turn;  
+    rgt = (driveRgt-correction) - Turn;
 
     Drive.move_drive(lft, rgt);
     
@@ -153,12 +153,12 @@ int opControlMacs(){
   int count;
   count = 0;
   while(1){
-    if((Drive.checkInstalled() || Arm.checkInstalled() || Intake.checkInstalled()) && count < 3){
-      count = count+1;
-      Controller1.rumble(".-.-");
+    if((Drive.checkInstalled() || Arm.checkInstalled() || Intake.checkInstalled()) && count <= 3){
+      count++;
+      Controller1.rumble(".-");
     }
 
-    wait(10);
+    wait(1500);
   }
   return 0;
 }
