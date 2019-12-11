@@ -1,3 +1,6 @@
+#ifndef COMMA_H
+#define COMMA_H
+
 void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng(),float rate = 1, bool slowdown = false){
   //- left + right
 
@@ -13,7 +16,7 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
     if(drivePos != 0){
       Drive.drivePID.changePID(8*rate, 0.5*rate, 2*rate);
     }
-    else if(turnAngle != (Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng()){
+    else if(turnAngle != ((Drive.isEncoderTurn==true)?radToDeg(Drive.sPos.Ang):Drive.getRoboAng())){
       Drive.turnPID.changePID(1.45*rate, 0.090625*rate, 0.3625*rate);
     }
     else{
@@ -33,11 +36,17 @@ void setDrive(int power, float drivePos, float turnAngle = (Drive.isEncoderTurn=
   Drive.desiredPos = drivePos;        //set drive pos
 }
 
-void waitDrive(int deadzone = 2){
+void waitSonar(int deadzone = 16){
+  float change;
+  float past;
+
   //wait for drive motors to slow down
-  while((fabs(RgtDrive.velocity(percentUnits::pct)) > deadzone) || (fabs(LftDrive.velocity(percentUnits::pct)) > deadzone)){
-    Brain.Screen.clearScreen();
-    wait(10);
+  while(fabs(change) < 0.9 || (fabs(RgtDrive.velocity(percentUnits::pct)) < 13) && (fabs(LftDrive.velocity(percentUnits::pct)) < 13)){
+    change = bckSon.distance(distanceUnits::cm) - past;
+    Brain.Screen.printAt(20,80,"%f",change);
+
+    past = bckSon.distance(distanceUnits::cm);   
+    wait(100);
   }
 }
 
@@ -97,7 +106,7 @@ void pickUp(int times, int frequency = 800, float dist = 8.5, bool noStr = false
   }
 }
 
-
+#endif 
 
 
 

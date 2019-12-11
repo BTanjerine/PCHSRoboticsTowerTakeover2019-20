@@ -48,7 +48,7 @@ class PID{
   }
 
   float getI(float error){
-    _i = (_i +error)*Ki;  //find power based on accumalated error
+    _i = (_i +(error))*Ki;  //find power based on accumalated error
     if(error == 0){_i = 0;}
     return _i;
   }

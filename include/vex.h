@@ -84,14 +84,24 @@ int driveControl(){
 
 int ArmPosControl(){
   int ArmPow;
+  int duration;
+  
   while(1){
     Brain.Screen.printAt(20,20,"%d",Arm.getArmPos());
 
     if(Arm.getArmPos() < 290 && Arm.desiredPos < 400){
-      ArmPow = -6;
+      if(duration < 1000){
+        ArmPow = -10;
+        duration++;
+      }
+      else{
+        ArmPow = 0;
+        Arm.Stop(brakeType::hold);
+      }
     }
     else{
       ArmPow = Arm.armPID.getOutputPower(Arm.DesPower, Arm.armPID.getError(Arm.getArmPos(), Arm.desiredPos));
+      duration = 0;
     }
 
     Arm.move_arm(ArmPow);

@@ -26,10 +26,12 @@ extern motor LftRoller;
 extern motor RgtDrive;
 extern motor LftDrive;
 extern motor MidDrive;
+
 extern pot arm_pot;
 extern gyro roboGyro;
 extern encoder rgtEnc;
 extern encoder lftEnc;
+extern sonar bckSon;
 extern controller Controller1;
 
 /**

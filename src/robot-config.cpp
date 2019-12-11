@@ -18,6 +18,7 @@ pot arm_pot = pot(Brain.ThreeWirePort.A);
 gyro roboGyro = gyro(Brain.ThreeWirePort.B);
 encoder rgtEnc = encoder(Brain.ThreeWirePort.C);
 encoder lftEnc = encoder(Brain.ThreeWirePort.E);
+sonar bckSon = sonar(Brain.ThreeWirePort.G);
 controller Controller1 = controller(primary);
 // VEXcode generated functions
 
